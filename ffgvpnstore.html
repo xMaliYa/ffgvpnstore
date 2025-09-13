@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>44G VPN Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        
+            @keyframes simple-fade-in {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /*
+            Styles for the main content container.
+            This is where the page-load animation is applied.
+        */
+        .content-card-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            text-align: center;
+            max-width: 98%;
+            margin: 1rem auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: simple-fade-in 1s ease-out forwards;
+        }
+        body {
+           font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, #088686, #271091, #85127b);
+            color: #ffffff;
+            background-size: 400% 400%;
+	animation: gradient-shift 5s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            }
+
+            @keyframes gradient-shift {
+                0% {
+background-position: 0% 50%;
+}
+50% {
+background-position: 100% 50%;
+}
+100% {
+background-position: 0% 50%;
+}
+}
+
+
+
+        .product-card {
+            background-color: rgba(31, 41, 55, 0.75); /* Normal dark with transparent */
+            border: 1px solid rgba(255, 255, 255, 0.479);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            transform: scale(1);
+        }
+        
+        /* Custom styles for button active state */
+        .filter-btn.active {
+            background-color: #6b46c1;
+            box-shadow: 0 0 15px rgba(107, 70, 193, 0.7);
+        }
+
+        /* Custom styles for the review stars */
+        .review-star {
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+        
+        /* Animation for buttons on hover */
+        .animated-btn {
+            transition: all 0.3s ease;
+        }
+
+        .animated-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Creative Menu Styles */
+        #menu-panel {
+            background-color: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1);
+            z-index: 40;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        #menu-panel.translate-x-full {
+            transform: translateX(100%);
+        }
+
+        .menu-btn {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="content-card-container">
+
+    <!-- Main Container -->
+    <div class="relative min-h-screen flex flex-col items-center">
+        
+
+        <!-- Header -->
+        <header class="w-full py-4 px-6 md:px-12 flex items-center justify-between z-10">
+            <!-- Logo and Name -->
+            <div class="flex items-center space-x-3">
+                <img src="logo.jpg" alt="44G VPN Logo" class="w-12 h-12 rounded-full">
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight">44G VPN</h1> <h1 style="color:rgb(251, 255, 32);" class="text-xl md:text-2xl font-bold tracking-tight">Store </h1>
+            </div>
+
+            <!-- Search Bar and Menu Button -->
+            <div class="flex items-center space-x-4">
+                <div class="relative w-full md:w-64">
+                    <input id="search-bar" type="text" placeholder="Search products..." class="w-full pl-4 pr-10 py-2 rounded-full text-sm text-gray-900 bg-white bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-purple-400">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+                <button id="menu-btn" class="p-2 text-white hover:text-purple-300 transition-colors duration-200 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow w-full max-w-7xl mx-auto py-8 md:py-16 px-6 md:px-12">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-center mb-4 tracking-wide leading-tight">Unlimited Internet - 44G VPN STORE</h2>
+            <p class="text-center text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-16">
+                Now you can feel real unlimited experience with our v2ray vpn plans. without speed limit. try it now with a package that suits your connection.
+            </p>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap justify-center space-x-2 md:space-x-4 mb-12">
+                <button data-filter="all" class="filter-btn active bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-6 rounded-full transition-all duration-300">All Networks</button>
+                <button data-filter="mobile" class="filter-btn bg-white bg-opacity-10 hover:bg-opacity-20 text-white font-medium py-2 px-6 rounded-full transition-all duration-300">Mobile Networks</button>
+                <button data-filter="router" class="filter-btn bg-white bg-opacity-10 hover:bg-opacity-20 text-white font-medium py-2 px-6 rounded-full transition-all duration-300">Router Networks</button>
+            </div>
+        
+            <!-- Product Cards Grid -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product Card 1 -->
+                <div class="product-card rounded-3xl p-6 text-center shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl" data-id="1" data-networks="router">
+                    <img src="dialog.jpg" alt="Product Image" class="rounded-2xl mx-auto mb-4">
+                    <h3 class="text-xl font-bold mb-2">DIALOG ZOOM</h3><br>
+                    <p class="text-lg font-semibold text-yellow-300 mb-4">LKR.400</p><br>
+                    <div class="flex justify-center space-x-4">
+                        <button class="buy-now-btn bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">Buy Now</button>
+                        <button class="view-details-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">View Details</button>
+                    </div>
+                </div>
+                <!-- Product Card 2 -->
+                <div class="product-card rounded-3xl p-6 text-center shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl" data-id="2" data-networks="router">
+                    <img src="slt.jpg" alt="Product Image" class="rounded-2xl mx-auto mb-4">
+                    <h3 class="text-xl font-bold mb-2">SLT4G / FIBER ZOOM</h3><br>
+                    <p class="text-lg font-semibold text-yellow-300 mb-4">LKR.400</p><br>
+                    <div class="flex justify-center space-x-4">
+                        <button class="buy-now-btn bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">Buy Now</button>
+                        <button class="view-details-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">View Details</button>
+                    </div>
+                </div>
+                <!-- Product Card 3 -->
+                <div class="product-card rounded-3xl p-6 text-center shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl" data-id="3" data-networks="router">
+                    <img src="slt.jpg" alt="Product Image" class="rounded-2xl mx-auto mb-4">
+                    <h3 class="text-xl font-bold mb-2">SLT4G / FIBER NETFLIX</h3>
+                    <p class="text-lg font-semibold text-yellow-300 mb-4">LKR.400</p><br>
+                    <div class="flex justify-center space-x-4">
+                        <button class="buy-now-btn bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">Buy Now</button>
+                        <button class="view-details-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">View Details</button>
+                    </div>
+                </div>
+                <!-- Product Card 4 -->
+                <div class="product-card rounded-3xl p-6 text-center shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl" data-id="4" data-networks="mobile">
+                    <img src="Mobitel.jpg" alt="Product Image" class="rounded-2xl mx-auto mb-4">
+                    <h3 class="text-xl font-bold mb-2">MOBITEL ZOOM</h3><br>
+                    <p class="text-lg font-semibold text-yellow-300 mb-4">LKR.250</p><br>
+                    <div class="flex justify-center space-x-4">
+                        <button class="buy-now-btn bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">Buy Now</button>
+                        <button class="view-details-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">View Details</button>
+                    </div>
+                </div>
+                <!-- Product Card 5 -->
+                <div class="product-card rounded-3xl p-6 text-center shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl" data-id="5" data-networks="mobile">
+                    <img src="Mobitel.jpg" alt="Product Image" class="rounded-2xl mx-auto mb-4">
+                    <h3 class="text-xl font-bold mb-2">MOBITEL ZERO</h3><br><br>
+                    <p class="text-lg font-semibold text-yellow-300 mb-4">LKR.400</p><br>
+                    <div class="flex justify-center space-x-4">
+                        <button class="buy-now-btn bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">Buy Now</button>
+                        <button class="view-details-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">View Details</button>
+                    </div>
+                </div>
+                <!-- Product Card 6 -->
+                <div class="product-card rounded-3xl p-6 text-center shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl" data-id="6" data-networks="mobile">
+                    <img src="hutch.png" alt="Product Image" class="rounded-2xl mx-auto mb-4">
+                    <h3 class="text-xl font-bold mb-2">HUTCH SOCIAL</h3><br><br>
+                    <p class="text-lg font-semibold text-yellow-300 mb-4">LKR.400</p><br>
+                    <div class="flex justify-center space-x-4">
+                        <button class="buy-now-btn bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">Buy Now</button>
+                        <button class="view-details-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">View Details</button>
+                    </div>
+                </div>
+                <!-- Product Card 7 -->
+                <div class="product-card rounded-3xl p-6 text-center shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl" data-id="7" data-networks="mobile">
+                    <img src="hutch.png" alt="Product Image" class="rounded-2xl mx-auto mb-4">
+                    <h3 class="text-xl font-bold mb-2">HUTCH GAMING</h3><br><br>
+                    <p class="text-lg font-semibold text-yellow-300 mb-4">LKR.400</p><br>
+                    <div class="flex justify-center space-x-4">
+                        <button class="buy-now-btn bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">Buy Now</button>
+                        <button class="view-details-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">View Details</button>
+                    </div>
+                </div>
+                <!-- Product Card 8 -->
+                <div class="product-card rounded-3xl p-6 text-center shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-2xl" data-id="8" data-networks="mobile">
+                    <img src="airtel.jpg" alt="Product Image" class="rounded-2xl mx-auto mb-4">
+                    <h3 class="text-xl font-bold mb-2">AIRTEL ZOOM</h3><br>
+                    <p class="text-lg font-semibold text-yellow-300 mb-4">LKR.250</p><br>
+                    <div class="flex justify-center space-x-4">
+                        <button class="buy-now-btn bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">Buy Now</button>
+                        <button class="view-details-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-full transition-colors duration-300">View Details</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Buttons -->
+            <div class="mt-16 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-8">
+                <button id="buy-payment-btn" class="animated-btn flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-colors duration-300">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Buy Payment Details</span>
+                </button>
+                <a href="https://wa.me/94771273983?text=Hi%20Admin%2C%20Im%20from%20your%2044G%20VPN%20Store%20website." target="_blank" class="animated-btn flex items-center justify-center space-x-2 bg-purple-400 hover:bg-purple-500 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-colors duration-300">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat with Admin</span>
+                </a>
+                <button id="review-btn" class="animated-btn flex items-center justify-center space-x-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-colors duration-300">
+                    <i class="fas fa-star"></i>
+                    <span>Review us</span>
+                </button>
+            </div>
+        </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="w-full py-6 px-12 text-center text-sm text-gray-200 mt-auto">
+            <p>&copy; 2025 44G VPN Store. All rights reserved.</p>
+            <div class="mt-4 flex justify-center space-x-6">
+                <a href="#" class="hover:text-purple-300 transition-colors duration-300">Privacy Policy</a>
+                <a href="#" class="hover:text-purple-300 transition-colors duration-300">Terms of Service</a>
+                <a href="#" class="hover:text-purple-300 transition-colors duration-300">Contact</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Off-canvas Menu -->
+    <div id="menu-panel" class="fixed top-0 right-0 w-80 md:w-96 h-full p-8 flex flex-col items-center justify-center translate-x-full">
+        <button id="menu-close-btn" class="absolute top-4 right-4 text-white hover:text-purple-300 transition-colors duration-200">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <div class="space-y-8 w-full text-center">
+            <h3 class="text-3xl font-extrabold text-white mb-6">Explore</h3>
+            <a href="https://chat.whatsapp.com/GqSN8aHQxyC6JbWLVOuFoT?mode=ems_copy_c" target="_blank" class="menu-btn animated-btn w-full py-4 px-6 rounded-3xl flex items-center justify-center space-x-4 bg-white bg-opacity-10 text-white font-semibold">
+                <i class="fab fa-whatsapp text-2xl"></i>
+                <span>Join Whatsapp Group</span>
+            </a>
+            <a href="https://t.me/fortyfourgangvpn" target="_blank" class="menu-btn animated-btn w-full py-4 px-6 rounded-3xl flex items-center justify-center space-x-4 bg-white bg-opacity-10 text-white font-semibold">
+                <i class="fab fa-telegram-plane text-2xl"></i>
+                <span>Join Telegram Channel</span>
+            </a>
+            <button id="how-to-btn" class="menu-btn animated-btn w-full py-4 px-6 rounded-3xl flex items-center justify-center space-x-4 bg-white bg-opacity-10 text-white font-semibold">
+                <i class="fas fa-tools text-2xl"></i>
+                <span>How to run a v2ray vpn</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Pop-up -->
+    <div id="modal-container" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div id="modal-card" class="bg-gray-800 product-card rounded-3xl p-8 w-full max-w-lg relative transform transition-all duration-300 scale-95 opacity-0">
+            <button id="modal-close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-200">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div id="modal-content" class="text-center">
+                <!-- Content will be injected here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample product data to populate the modal
+        const products = {
+            1: {
+                name: "DIALOG ZOOM",
+                price: "LKR.400",
+                image: "dialog.jpg",
+                details: "Working package : Dialog Prepaid router 298,724 zoom packages.<br> VPN Duration : 30 Days<br> VPN Usage limit : Unlimited",
+                networks: ["router"]
+            },
+            2: {
+                name: "SLT 4G / FIBER ZOOM",
+                price: "LKR.400",
+                image: "slt.jpg",
+                details: "Working package : SLT 4G and Fiber postpaid router Meetmax addon package.<br> VPN Duration : 30 Days<br> VPN Usage limit : Unlimited",
+                networks: ["router"]
+            },
+            3: {
+                name: "SLT 4G / FIBER NETFLIX",
+                price: "LKR.400",
+                image: "slt.jpg",
+                details: "Working package : SLT 4G and Fiber postpaid router Entertainment addon package.<br> VPN Duration : 30 Days<br> VPN Usage limit : Unlimited",
+                networks: ["router"]
+            },
+            4: {
+                name: "MOBITEL ZOOM",
+                price: "LKR.250",
+                image: "Mobitel.jpg",
+                details: "Working package : Mobitel Mobile 222 zoom package.<br> VPN Duration : 30 Days<br> VPN Usage limit : 100GB",
+                networks: ["mobile"]
+            },
+            5: {
+                name: "MOBITEL ZERO",
+                price: "LKR.400",
+                image: "Mobitel.jpg",
+                details: "Working package : No need any package<br> VPN Duration : 30 Days<br> VPN Usage limit : 100GB/200GB/300GB",
+                networks: ["mobile"]
+            },
+            6: {
+                name: "HUTCH SOCIAL",
+                price: "LKR.400",
+                image: "hutch.png",
+                details: "Working package : Hutch 209,299,699,998 social media packages.<br> VPN Duration : 30 Days<br> VPN Usage limit : Unlimited",
+                networks: ["mobile"]
+            },
+            7: {
+                name: "HUTCH GAMING",
+                price: "LKR.400",
+                image: "hutch.png",
+                details: "Working package : Hutch 265,505 Gaming packages.<br> VPN Duration : 30 Days<br> VPN Usage limit : Unlimited",
+                networks: ["mobile"]
+            },
+            8: {
+                name: "AIRTEL ZOOM",
+                price: "LKR.250",
+                image: "airtel.jpg",
+                details: "Working package : Airtel 215 Zoom package.<br> VPN Duration : 30 Days<br> VPN Usage limit : 100GB",
+                networks: ["mobile"]
+            }
+        };
+
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalCard = document.getElementById('modal-card');
+        const productGrid = document.getElementById('product-grid');
+        const searchBar = document.getElementById('search-bar');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const buyPaymentBtn = document.getElementById('buy-payment-btn');
+        const reviewBtn = document.getElementById('review-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        const menuCloseBtn = document.getElementById('menu-close-btn');
+        const menuPanel = document.getElementById('menu-panel');
+        const howToBtn = document.getElementById('how-to-btn');
+
+        let currentRating = 0;
+
+        // Function to show the modal with a fade-in and scale-in effect
+        const showModal = () => {
+            modalContainer.classList.remove('hidden');
+            setTimeout(() => {
+                modalCard.classList.remove('scale-95', 'opacity-0');
+                modalCard.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+
+        // Function to hide the modal with a fade-out and scale-out effect
+        const hideModal = () => {
+            modalCard.classList.remove('scale-100', 'opacity-100');
+            modalCard.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modalContainer.classList.add('hidden');
+            }, 300);
+        };
+
+        // Function to copy text to clipboard
+        const copyToClipboard = (text) => {
+            const tempInput = document.createElement('input');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Failed to copy text', err);
+            }
+            document.body.removeChild(tempInput);
+        };
+        
+        // Toggle menu visibility
+        const toggleMenu = () => {
+            menuPanel.classList.toggle('translate-x-full');
+        };
+
+        // Event listener for the close button
+        modalCloseBtn.addEventListener('click', hideModal);
+        
+        // Event listeners for menu button
+        menuBtn.addEventListener('click', toggleMenu);
+        menuCloseBtn.addEventListener('click', toggleMenu);
+
+        // Event listener for the backdrop to close the modal
+        modalContainer.addEventListener('click', (e) => {
+            if (e.target.id === 'modal-container') {
+                hideModal();
+            }
+        });
+        
+        // Event listener for "How to run a v2ray vpn" button
+        howToBtn.addEventListener('click', () => {
+            toggleMenu();
+            modalContent.innerHTML = `
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center justify-center space-x-2"><i class="fas fa-tools text-purple-400"></i><span>How to run a v2ray vpn on mobile and PC</span></h3>
+                    <div class="flex flex-col space-y-4">
+                        <a href="https://youtube.com/shorts/xAwLkm8hTNM?si=71hTFTU7YH_PcsDW" target="_blank" class="w-full py-4 px-6 rounded-3xl flex items-center justify-center space-x-4 bg-purple-600 hover:bg-purple-700 transition-colors duration-300 text-white font-semibold">
+                            <i class="fas fa-mobile-alt text-2xl"></i>
+                            <span>How to run on mobile</span>
+                        </a>
+                        <a href="https://youtu.be/SfmbcI8U_kk?si=hdEOWR-WZVNf6mmE" target="_blank" class="w-full py-4 px-6 rounded-3xl flex items-center justify-center space-x-4 bg-purple-600 hover:bg-purple-700 transition-colors duration-300 text-white font-semibold">
+                            <i class="fas fa-desktop text-2xl"></i>
+                            <span>How to run on PC</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+            showModal();
+        });
+
+        // Event listener for the "Buy Payment Details" button
+        buyPaymentBtn.addEventListener('click', () => {
+            modalContent.innerHTML = `
+                <h3 class="text-2xl font-bold mb-6">Payment Details</h3>
+                <div class="space-y-6 text-left">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-university text-purple-400"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-400">Bank Name</p>
+                                <p class="font-semibold text-white">BOC - Kurunegala</p>
+                            </div>
+                        </div>
+                        <button onclick="copyToClipboard('BOC - Kurunegala')" class="text-gray-400 hover:text-white transition-colors duration-200">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-credit-card text-purple-400"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-400">Account Number</p>
+                                <p class="font-semibold text-white">9799939</p>
+                            </div>
+                        </div>
+                        <button onclick="copyToClipboard('9799939')" class="text-gray-400 hover:text-white transition-colors duration-200">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-user-circle text-purple-400"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-400">Account Holder</p>
+                                <p class="font-semibold text-white">A.M.T.M.ADHIKARI</p>
+                            </div>
+                        </div>
+                        <button onclick="copyToClipboard('A.M.T.M.ADHIKARI')" class="text-gray-400 hover:text-white transition-colors duration-200">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-mobile-alt text-purple-400"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-400">Ezcash Number</p>
+                                <p id="ezcash-number" class="font-semibold text-white">0771273983</p>
+                            </div>
+                        </div>
+                        <button onclick="copyToClipboard('0771273983')" class="text-gray-400 hover:text-white transition-colors duration-200">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            showModal();
+        });
+
+        // Event listener for the "Review Us" button
+        reviewBtn.addEventListener('click', () => {
+            modalContent.innerHTML = `
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold mb-4 flex items-center justify-center space-x-2"><i class="fas fa-comment-dots text-purple-400"></i><span>Review Us</span></h3>
+                    <div id="star-rating" class="flex justify-center text-4xl mb-4">
+                        <i class="far fa-star text-gray-400 review-star" data-value="1"></i>
+                        <i class="far fa-star text-gray-400 review-star" data-value="2"></i>
+                        <i class="far fa-star text-gray-400 review-star" data-value="3"></i>
+                        <i class="far fa-star text-gray-400 review-star" data-value="4"></i>
+                        <i class="far fa-star text-gray-400 review-star" data-value="5"></i>
+                    </div>
+                    <textarea id="review-comment" class="w-full h-32 p-4 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none" placeholder="Write your comment here..."></textarea>
+                    <button id="send-review-btn" class="w-full py-3 px-6 rounded-full bg-purple-600 hover:bg-purple-700 transition-colors duration-300 text-white font-semibold flex items-center justify-center space-x-2 animated-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Send Review</span>
+                    </button>
+                </div>
+            `;
+            showModal();
+
+            // Add event listeners for the new elements inside the modal
+            const starRatingContainer = document.getElementById('star-rating');
+            const reviewCommentTextarea = document.getElementById('review-comment');
+            const sendReviewBtn = document.getElementById('send-review-btn');
+            
+            // Star rating click and hover logic
+            starRatingContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('review-star')) {
+                    currentRating = parseInt(e.target.dataset.value);
+                    updateStars(currentRating);
+                }
+            });
+
+            starRatingContainer.addEventListener('mouseover', (e) => {
+                if (e.target.classList.contains('review-star')) {
+                    const hoverValue = parseInt(e.target.dataset.value);
+                    updateStars(hoverValue, true);
+                }
+            });
+
+            starRatingContainer.addEventListener('mouseout', () => {
+                updateStars(currentRating);
+            });
+
+            const updateStars = (rating, isHover = false) => {
+                const stars = starRatingContainer.querySelectorAll('.review-star');
+                stars.forEach(star => {
+                    const starValue = parseInt(star.dataset.value);
+                    if (starValue <= rating) {
+                        star.classList.add('fas', 'text-yellow-400');
+                        star.classList.remove('far', 'text-gray-400');
+                    } else {
+                        star.classList.add('far', 'text-gray-400');
+                        star.classList.remove('fas', 'text-yellow-400');
+                    }
+                });
+            };
+
+            // Send review via WhatsApp
+            sendReviewBtn.addEventListener('click', () => {
+                const comment = reviewCommentTextarea.value;
+                if (currentRating === 0) {
+                    modalContent.innerHTML = `<div class="text-center p-6 space-y-4"><i class="fas fa-exclamation-circle text-yellow-500 text-5xl"></i><h3 class="text-xl font-bold">Please select a star rating.</h3><button onclick="hideModal()" class="mt-4 px-6 py-2 rounded-full bg-purple-600 text-white font-medium hover:bg-purple-700 transition">OK</button></div>`;
+                    return;
+                }
+
+                const message = `Review from website:%0A⭐ Stars: ${currentRating}/5%0A💬 Comment: ${comment}`;
+                const whatsappUrl = `https://wa.me/94771273983?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+                hideModal();
+            });
+        });
+
+        // Function to filter products based on a query
+        const searchProducts = (query) => {
+            const productCards = document.querySelectorAll('.product-card');
+            const lowerCaseQuery = query.toLowerCase();
+
+            productCards.forEach(card => {
+                const productId = card.dataset.id;
+                const product = products[productId];
+                
+                // Check if product name or details match the search query
+                const matchesSearch = product.name.toLowerCase().includes(lowerCaseQuery) || product.details.toLowerCase().includes(lowerCaseQuery);
+                
+                // Check if the card is currently visible from the network filter
+                const isVisibleByFilter = !card.classList.contains('hidden');
+
+                if (matchesSearch && isVisibleByFilter) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        };
+
+        // Function to filter products based on a network type
+        const filterProducts = (networkType) => {
+            const productCards = document.querySelectorAll('.product-card');
+
+            productCards.forEach(card => {
+                const networks = card.dataset.networks;
+                const matchesFilter = networkType === 'all' || networks.includes(networkType);
+
+                if (matchesFilter) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            // Re-apply search filter after network filter
+            searchProducts(searchBar.value);
+        };
+
+        // Event listeners for filter buttons
+        filterBtns.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(btn => btn.classList.remove('active', 'bg-opacity-20', 'hover:bg-opacity-30'));
+                filterBtns.forEach(btn => btn.classList.add('bg-opacity-10', 'hover:bg-opacity-20'));
+                
+                // Add active class to the clicked button
+                button.classList.add('active', 'bg-opacity-20', 'hover:bg-opacity-30');
+                button.classList.remove('bg-opacity-10', 'hover:bg-opacity-20');
+
+                const filterType = button.dataset.filter;
+                filterProducts(filterType);
+            });
+        });
+
+        // Event listener for the search bar
+        searchBar.addEventListener('keyup', (e) => {
+            searchProducts(e.target.value);
+        });
+
+        // Get all product card buttons
+        const productCards = document.querySelectorAll('.product-card');
+
+        productCards.forEach(card => {
+            const productId = card.dataset.id;
+            const product = products[productId];
+            const buyNowBtn = card.querySelector('.buy-now-btn');
+            const viewDetailsBtn = card.querySelector('.view-details-btn');
+
+            buyNowBtn.addEventListener('click', () => {
+                modalContent.innerHTML = `
+                    <div class="space-y-6">
+                        <img src="${product.image}" alt="${product.name}" class="rounded-2xl mx-auto w-32 h-32">
+                        <h3 class="text-3xl font-bold mb-2 text-white">${product.name}</h3>
+                        <p class="text-2xl font-semibold text-purple-300 mb-4">${product.price}</p>
+                        <p class="text-gray-300 mb-6">Make the payment according to the payment details and send the message with the receipt.</p>
+                        <div class="flex flex-col space-y-4">
+                            <a href="https://wa.me/94771273983?text=I%20would%20like%20to%20buy%20the%20${encodeURIComponent(product.name)}%20-%20${encodeURIComponent(product.price)} 30days v2ray vpn." target="_blank" class="w-full py-3 px-6 rounded-full bg-green-500 hover:bg-green-600 transition-colors duration-300 text-white font-semibold flex items-center justify-center space-x-2">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>Buy on WhatsApp</span>
+                            </a>
+                            <a href="https://t.me/xmaliya99?text=I%20would%20like%20to%20buy%20the%20${encodeURIComponent(product.name)}%20-%20${encodeURIComponent(product.price)} 30days v2ray vpn." target="_blank" class="w-full py-3 px-6 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors duration-300 text-white font-semibold flex items-center justify-center space-x-2">
+                                <i class="fab fa-telegram-plane"></i>
+                                <span>Buy on Telegram</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                showModal();
+            });
+
+            viewDetailsBtn.addEventListener('click', () => {
+                modalContent.innerHTML = `
+                    <div class="space-y-6">
+                        <img src="${product.image}" alt="${product.name}" class="rounded-2xl mx-auto w-40 h-40 mb-4">
+                        <h3 class="text-3xl font-bold mb-2 text-white">${product.name}</h3>
+                        <p class="text-2xl font-semibold text-purple-300 mb-6">${product.price}</p>
+                        <p class="text-gray-300 text-left leading-relaxed">${product.details}</p>
+                    </div>
+                `;
+                showModal();
+            });
+        });
+    </script>
+</body>
+</html>
