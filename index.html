@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>44G VPN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0f172a; /* Dark Slate */
+            color: #e2e8f0;
+            overflow-x: hidden; /* Prevent horizontal scroll when drawer opens */
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Blinking Dot Animation */
+        .blink-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: blinker 1.5s linear infinite;
+            box-shadow: 0 0 5px #22c55e;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+
+        /* Modal Transitions */
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            transform: scale(0.9);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Side Drawer Transition */
+        #sideDrawer {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6; 
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+    <!-- Header Section -->
+    <header class="bg-slate-900 border-b border-slate-700 py-6 text-center shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <!-- Hamburger Menu Button -->
+            <button onclick="toggleDrawer()" class="absolute right-0 top-0 mt-2 mr-2 md:mt-4 md:mr-4 text-white text-2xl p-2 hover:text-blue-400 transition z-20 bg-slate-800/50 rounded-lg backdrop-blur-sm border border-slate-600">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <h1 class="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-4">44G VPN</h1>
+            <p class="text-slate-300 max-w-2xl mx-auto text-lg leading-relaxed">
+                Experience the fastest and Unlimited internet connection with 44G VPN. 
+                Unlock global content, protect your privacy, and enjoy seamless streaming and gaming without interruptions.
+                <br><span class="text-sm text-blue-400 mt-2 block">Use Unlimited without limit</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Side Drawer (Right Panel) -->
+    <div id="sideOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity opacity-0"></div>
+    <div id="sideDrawer" class="fixed top-0 right-0 h-full w-72 bg-slate-900 shadow-2xl transform translate-x-full z-50 overflow-y-auto border-l border-slate-700">
+        <!-- Close Button -->
+        <div class="p-4 flex justify-between items-center border-b border-slate-700 bg-slate-950">
+            <h2 class="text-lg font-bold text-white brand-font">Menu</h2>
+            <button onclick="toggleDrawer()" class="text-slate-400 hover:text-red-400 transition"><i class="fas fa-times text-2xl"></i></button>
+        </div>
+        
+        <!-- Drawer Content -->
+        <div class="p-5 space-y-8">
+            
+            <!-- Mobile Clients -->
+            <div>
+                <h3 class="text-blue-400 font-bold mb-3 border-b border-slate-700 pb-2 flex items-center">
+                    <i class="fas fa-mobile-alt mr-2"></i> Mobile Clients
+                </h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">Netmod (Android)</a></li>
+                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">V2box (Android/iOS)</a></li>
+                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">V2rayTun (Android/iOS)</a></li>
+                </ul>
+            </div>
+
+            <!-- PC Clients -->
+            <div>
+                <h3 class="text-purple-400 font-bold mb-3 border-b border-slate-700 pb-2 flex items-center">
+                    <i class="fas fa-desktop mr-2"></i> PC Clients
+                </h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">Netch (Windows)</a></li>
+                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">Netmod (Windows)</a></li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3 pt-2">
+                <a href="https://chat.whatsapp.com/GqSN8aHQxyC6JbWLVOuFoT?mode=hqrt3" target="_blank" class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg shadow transition flex items-center justify-center font-bold">
+                    <i class="fab fa-whatsapp text-xl mr-2"></i> Join WhatsApp
+                </a>
+                <a href="https://t.me/fortyfourgangvpn" target="_blank" class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-center py-3 rounded-lg shadow transition flex items-center justify-center font-bold">
+                    <i class="fab fa-telegram-plane text-xl mr-2"></i> Join Telegram
+                </a>
+                
+                <!-- How to Run Dropdown -->
+                <div class="pt-2">
+                    <button onclick="toggleHowToRun()" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg shadow transition flex items-center justify-center font-bold relative group">
+                        <i class="fas fa-question-circle mr-2 text-yellow-400"></i> How to run
+                        <i class="fas fa-chevron-down ml-auto mr-3 transition-transform duration-300" id="howToArrow"></i>
+                    </button>
+                    
+                    <div id="howToSubMenu" class="hidden mt-2 space-y-2 animate-fade-in-down pl-4 border-l-2 border-slate-600 ml-2">
+                        <a href="https://youtube.com/shorts/xAwLkm8hTNM?si=AjOyw0T7Ln0w4HoZ" target="_blank" class="block bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 text-sm py-2 px-3 rounded transition flex items-center">
+                            <i class="fab fa-youtube mr-2 text-red-500 group-hover:text-white"></i> How to run on Mobile
+                        </a>
+                        <a href="https://youtu.be/SfmbcI8U_kk?si=FgsCQYqpfBjaaT66" target="_blank" class="block bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 text-sm py-2 px-3 rounded transition flex items-center">
+                            <i class="fab fa-youtube mr-2 text-red-500 group-hover:text-white"></i> How to run on PC
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center text-xs text-slate-500 mt-8">
+                v2.0 | 44G VPN
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <main class="flex-grow container mx-auto px-4 py-10">
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Product cards will be injected here by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Bottom Actions Section -->
+    <section class="bg-slate-800 py-8 border-t border-slate-700">
+        <div class="container mx-auto px-4 flex flex-wrap justify-center gap-4">
+            <button onclick="openModal('paymentModal')" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 flex items-center">
+                <i class="fas fa-credit-card mr-2"></i> Payment Details
+            </button>
+            
+            <a href="https://xmaliya.github.io/44gvpnfree/" target="_blank" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 flex items-center text-center">
+                <i class="fas fa-server mr-2"></i> 44G VPN FREE Servers
+            </a>
+
+            <button onclick="openModal('rateModal')" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 flex items-center">
+                <i class="fas fa-star mr-2"></i> Rate Us
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 py-6 text-center text-slate-500 text-sm">
+        <p class="brand-font text-slate-400">Powered by Malithz</p>
+        <p class="mt-1">&copy; 2025 All Rights Reserved.</p>
+    </footer>
+
+    <!-- Floating Support Button -->
+    <button onclick="openModal('supportModal')" class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-2xl z-40 transition transform hover:scale-110 border-2 border-blue-400">
+        <i class="fas fa-headset text-2xl"></i>
+    </button>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- 1. Buy Now Modal (Step 1) -->
+    <div id="buyStep1Modal" class="modal">
+        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600">
+            <button onclick="closeModal('buyStep1Modal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <div id="buyStep1Content" class="text-center">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="mt-6 text-center">
+                <p class="text-yellow-400 text-sm mb-4"><i class="fas fa-info-circle"></i> First make the payment, then fill in the details at checkout and submit.</p>
+                <button onclick="proceedToCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">
+                    Proceed to Checkout <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Checkout Modal (Step 2) -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600 overflow-y-auto max-h-[90vh]">
+            <button onclick="closeModal('checkoutModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-2xl font-bold mb-1 text-center text-blue-400">Checkout</h3>
+            <p id="checkoutProductName" class="text-center text-slate-300 mb-6 font-semibold"></p>
+            
+            <form id="checkoutForm" onsubmit="handleCheckout(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Your Name</label>
+                    <input type="text" id="buyerName" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none" placeholder="Enter your name">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">WhatsApp Number</label>
+                    <input type="tel" id="buyerNumber" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none" placeholder="07xxxxxxxx">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Select Package</label>
+                    <select id="packageSelect" class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                        <!-- Options injected via JS -->
+                    </select>
+                </div>
+                
+                <div class="bg-slate-700/50 p-3 rounded border border-slate-600">
+                    <label class="block text-sm text-slate-400 mb-2">Payment Method</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="Bank Deposit" checked class="text-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">Bank Transfer</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="EzCash" class="text-blue-500 focus:ring-blue-500">
+                            <span class="ml-2">EzCash</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Payment Date & Time</label>
+                    <input type="datetime-local" id="paymentTime" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition flex items-center justify-center mt-4">
+                    <i class="fab fa-whatsapp text-xl mr-2"></i> Place Order via WhatsApp
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Product Details Modal -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600">
+            <button onclick="closeModal('detailsModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <div id="detailsContent" class="text-center">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Payment Details Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600">
+            <button onclick="closeModal('paymentModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-2xl font-bold mb-4 text-center text-yellow-400">Payment Details</h3>
+            
+            <div class="space-y-4">
+                <div class="bg-slate-700 p-4 rounded-lg relative group">
+                    <h4 class="text-blue-300 font-bold mb-1">Bank Transfer - BOC</h4>
+                    <p class="text-sm">Account Name: <span class="text-white">A.M.T.M.ADHIKARI</span></p>
+                    <p class="text-sm">Account No: <span id="bankAcc" class="text-white font-mono">9799939</span></p>
+                    <p class="text-sm">Branch: <span class="text-white">Kurunegala</span></p>
+                    <button onclick="copyToClipboard('bankAcc')" class="absolute top-2 right-2 text-slate-400 hover:text-green-400 p-2"><i class="fas fa-copy"></i></button>
+                </div>
+
+                <div class="bg-slate-700 p-4 rounded-lg relative group">
+                    <h4 class="text-green-400 font-bold mb-1">EzCash</h4>
+                    <p class="text-sm">Number: <span id="ezNumber" class="text-white font-mono">0771273983</span></p>
+                    <button onclick="copyToClipboard('ezNumber')" class="absolute top-2 right-2 text-slate-400 hover:text-green-400 p-2"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Rate Us Modal -->
+    <div id="rateModal" class="modal">
+        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600">
+            <button onclick="closeModal('rateModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-2xl font-bold mb-4 text-center text-purple-400">Rate Us</h3>
+            <form onsubmit="submitRating(event)">
+                <div class="flex justify-center mb-4 space-x-2">
+                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(1)" id="star1"></i>
+                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(2)" id="star2"></i>
+                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(3)" id="star3"></i>
+                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(4)" id="star4"></i>
+                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(5)" id="star5"></i>
+                </div>
+                <input type="hidden" id="ratingValue" value="0">
+                <input type="text" id="raterName" placeholder="Your Name" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 mb-3 text-white focus:outline-none">
+                <textarea id="rateComment" rows="3" placeholder="Write a comment..." class="w-full bg-slate-700 border border-slate-600 rounded p-2 mb-4 text-white focus:outline-none"></textarea>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition">
+                    Submit Rating <i class="fab fa-whatsapp ml-1"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. Support Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-sm p-6 relative border border-slate-600">
+            <button onclick="closeModal('supportModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-xl font-bold mb-4 text-center text-blue-400">Customer Support</h3>
+            <p class="text-xs text-slate-400 text-center mb-4">How can we help you today?</p>
+            <form onsubmit="submitSupport(event)">
+                <textarea id="supportMsg" rows="4" placeholder="Type your message..." required class="w-full bg-slate-700 border border-slate-600 rounded p-2 mb-4 text-white focus:outline-none"></textarea>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition">
+                    Send to WhatsApp <i class="fab fa-whatsapp ml-1"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Data Configuration ---
+        const WHATSAPP_NUMBER = "94771273983"; // Format: 94xxxxxxxxx
+
+        const products = [
+            {
+                id: 1,
+                name: "Dialog Zoom",
+                image: "dialog.jpg",
+                prices: ["100GB - 200 LKR", "200GB - 300 LKR", "300GB - 400 LKR", "Unlimited - 500 LKR"],
+                duration: "Valid for 30 Days",
+                plans: ["Dialog Router 298,724 work and learn lite packages"],
+                status: "Available"
+            },
+            {
+                id: 2,
+                name: "SLT4G / FIBER ZOOM",
+                image: "slt.jpg",
+                prices: ["100GB - 200 LKR", "200GB - 300 LKR", "300GB - 400 LKR", "Unlimited - 500 LKR"],
+                duration: "Valid for 30 Days",
+                plans: ["SLT 4G and Fiber postpaid router Meetmax addon package."],
+                status: "Available"
+            },
+            {
+                id: 3,
+                name: "SLT4G / FIBER NETFLIX",
+                image: "slt.jpg",
+                prices: ["100GB - 200 LKR", "200GB - 300 LKR", "300GB - 400 LKR", "Unlimited - 500 LKR"],
+                duration: "Valid for 30 Days",
+                plans: ["SLT 4G and Fiber postpaid router Entertainment addon package."],
+                status: "Available"
+            },
+            {
+                id: 4,
+                name: "MOBITEL ZOOM",
+                image: "Mobitel.jpg",
+                prices: ["100GB - 250 LKR", "200GB - 350 LKR", "300GB - 450 LKR", "500GB - 600 LKR"],
+                duration: "Valid for 30 Days",
+                plans: ["Mobitel Mobile 222 zoom package."],
+                status: "Available"
+            },
+            {
+                id: 5,
+                name: "HUTCH SOCIAL",
+                image: "hutch.png",
+                prices: ["100GB - 200 LKR", "200GB - 300 LKR", "300GB - 400 LKR", "Unlimited - 500 LKR"],
+                duration: "Valid for 30 Days",
+                plans: ["Hutch 209,299,699,998 social media packages."],
+                status: "Available"
+            },
+            {
+                id: 6,
+                name: "AIRTEL ZOOM",
+                image: "airtel.jpg",
+                prices: ["100GB - 250 LKR", "200GB - 350 LKR", "300GB - 450 LKR", "500GB - 600 LKR"],
+                duration: "Valid for 30 Days",
+                plans: ["Airtel 215 Zoom package."],
+                status: "Available"
+            }
+        ];
+
+        let selectedProduct = null;
+        let currentRating = 0;
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            
+            // Set current time to datetime inputs for convenience
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('paymentTime').value = now.toISOString().slice(0,16);
+        });
+
+        // --- Render Products ---
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(product => `
+                <div class="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700 hover:shadow-blue-500/20 transition duration-300">
+                    <div class="relative">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                        <div class="absolute top-0 right-0 bg-slate-900/80 px-2 py-1 m-2 rounded text-xs text-white">44G VPN</div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold mb-2 text-white">${product.name}</h3>
+                        <div class="flex items-center mb-4">
+                            <span class="blink-dot"></span>
+                            <span class="text-green-400 text-sm font-semibold uppercase tracking-wider">${product.status}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="openBuyModal(${product.id})" class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-medium transition">Buy Now</button>
+                            <button onclick="openDetailsModal(${product.id})" class="bg-slate-700 hover:bg-slate-600 text-white py-2 rounded font-medium transition">Details</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Drawer Logic ---
+        function toggleDrawer() {
+            const drawer = document.getElementById('sideDrawer');
+            const overlay = document.getElementById('sideOverlay');
+            
+            if (drawer.classList.contains('translate-x-full')) {
+                // Open
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            } else {
+                // Close
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function toggleHowToRun() {
+            const menu = document.getElementById('howToSubMenu');
+            const arrow = document.getElementById('howToArrow');
+            if(menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.classList.add('rotate-180');
+            } else {
+                menu.classList.add('hidden');
+                arrow.classList.remove('rotate-180');
+            }
+        }
+
+        // --- Modal Logic ---
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // --- Buy Flow Logic ---
+        function openBuyModal(id) {
+            selectedProduct = products.find(p => p.id === id);
+            if (!selectedProduct) return;
+
+            const content = document.getElementById('buyStep1Content');
+            content.innerHTML = `
+                <img src="${selectedProduct.image}" class="w-full h-40 object-cover rounded-lg mb-4 border border-slate-600">
+                <h2 class="text-2xl font-bold text-white mb-2">${selectedProduct.name}</h2>
+                <div class="text-left bg-slate-700/50 p-4 rounded-lg">
+                    <h4 class="text-blue-300 text-sm font-bold mb-2">Price List:</h4>
+                    <ul class="list-disc list-inside text-slate-300 text-sm mb-3">
+                        ${selectedProduct.prices.map(p => `<li>${p}</li>`).join('')}
+                    </ul>
+                    <h4 class="text-blue-300 text-sm font-bold mb-1">Duration:</h4>
+                    <p class="text-slate-300 text-sm">${selectedProduct.duration}</p>
+                </div>
+            `;
+            openModal('buyStep1Modal');
+        }
+
+        function proceedToCheckout() {
+            closeModal('buyStep1Modal');
+            
+            // Populate Checkout Modal
+            document.getElementById('checkoutProductName').textContent = `Package: ${selectedProduct.name}`;
+            
+            // Populate Dropdown
+            const select = document.getElementById('packageSelect');
+            select.innerHTML = selectedProduct.prices.map(p => `<option value="${p}">${p}</option>`).join('');
+            
+            openModal('checkoutModal');
+        }
+
+        function handleCheckout(e) {
+            e.preventDefault();
+            const name = document.getElementById('buyerName').value;
+            const number = document.getElementById('buyerNumber').value;
+            const pricePkg = document.getElementById('packageSelect').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const dateTime = document.getElementById('paymentTime').value;
+
+            const message = `*--- NEW ORDER (44G VPN) ---*%0A%0A` +
+                            `*Product:* ${selectedProduct.name}%0A` +
+                            `*Buyer Name:* ${name}%0A` +
+                            `*Number:* ${number}%0A` +
+                            `*Selected Pkg:* ${pricePkg}%0A` +
+                            `*Payment Method:* ${paymentMethod}%0A` +
+                            `*Date/Time:* ${dateTime}%0A%0A` +
+                            `_Please verify payment._`;
+
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+            window.open(url, '_blank');
+            closeModal('checkoutModal');
+        }
+
+        // --- Details Logic ---
+        function openDetailsModal(id) {
+            const product = products.find(p => p.id === id);
+            const content = document.getElementById('detailsContent');
+            content.innerHTML = `
+                <img src="${product.image}" class="w-full h-40 object-cover rounded-lg mb-4 border border-slate-600">
+                <h2 class="text-2xl font-bold text-white mb-4">${product.name}</h2>
+                
+                <div class="space-y-3 text-left">
+                    <div class="bg-slate-700/30 p-3 rounded">
+                        <h5 class="text-blue-400 text-sm font-bold">Prices</h5>
+                        <ul class="text-slate-300 text-sm list-none">
+                            ${product.prices.map(p => `<li>• ${p}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-slate-700/30 p-3 rounded">
+                        <h5 class="text-purple-400 text-sm font-bold">Working Plans</h5>
+                        <ul class="text-slate-300 text-sm list-none">
+                            ${product.plans.map(p => `<li>• ${p}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-700/30 p-3 rounded">
+                         <h5 class="text-green-400 text-sm font-bold">Duration</h5>
+                         <p class="text-slate-300 text-sm">${product.duration}</p>
+                    </div>
+                </div>
+            `;
+            openModal('detailsModal');
+        }
+
+        // --- Rating Logic ---
+        function setRating(n) {
+            currentRating = n;
+            document.getElementById('ratingValue').value = n;
+            for(let i=1; i<=5; i++) {
+                const star = document.getElementById(`star${i}`);
+                if(i <= n) {
+                    star.classList.remove('text-slate-600');
+                    star.classList.add('text-yellow-400');
+                } else {
+                    star.classList.remove('text-yellow-400');
+                    star.classList.add('text-slate-600');
+                }
+            }
+        }
+
+        function submitRating(e) {
+            e.preventDefault();
+            const name = document.getElementById('raterName').value;
+            const comment = document.getElementById('rateComment').value;
+            
+            if(currentRating === 0) {
+                alert("Please select a star rating!");
+                return;
+            }
+
+            const message = `*--- NEW RATING ---*%0A` +
+                            `*Stars:* ${currentRating}/5 ⭐️%0A` +
+                            `*Name:* ${name}%0A` +
+                            `*Comment:* ${comment}`;
+            
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+            window.open(url, '_blank');
+            closeModal('rateModal');
+        }
+
+        // --- Support Logic ---
+        function submitSupport(e) {
+            e.preventDefault();
+            const msg = document.getElementById('supportMsg').value;
+            const finalMsg = `*--- CUSTOMER SUPPORT ---*%0A%0A${encodeURIComponent(msg)}`;
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${finalMsg}`;
+            window.open(url, '_blank');
+            closeModal('supportModal');
+        }
+
+        // --- Utility: Copy to Clipboard ---
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            
+            // Create a temporary textarea element
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";  // Avoid scrolling to bottom
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                alert('Copied to clipboard: ' + text);
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+</html>
