@@ -1,655 +1,1267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>44G VPN</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>44G VPN</title>
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #0f172a; /* Dark Slate */
-            color: #e2e8f0;
-            overflow-x: hidden; /* Prevent horizontal scroll when drawer opens */
-        }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-        h1, h2, h3, .brand-font {
-            font-family: 'Orbitron', sans-serif;
-        }
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
-        /* Blinking Dot Animation */
-        .blink-dot {
-            height: 10px;
-            width: 10px;
-            background-color: #22c55e;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-            animation: blinker 1.5s linear infinite;
-            box-shadow: 0 0 5px #22c55e;
-        }
+    :root{
+      --bg1:#050b1d;
+      --bg2:#070a12;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --text: #e8eefc;
+      --muted: rgba(232,238,252,.70);
+      --glow: 0 20px 80px rgba(59,130,246,.25);
+    }
 
-        @keyframes blinker {
-            50% { opacity: 0; }
-        }
+    body{
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background:
+        radial-gradient(1200px 800px at 10% 10%, rgba(59,130,246,.22), transparent 60%),
+        radial-gradient(900px 600px at 90% 20%, rgba(168,85,247,.18), transparent 55%),
+        radial-gradient(800px 500px at 70% 90%, rgba(34,197,94,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      overflow-x:hidden;
+    }
 
-        /* Modal Transitions */
-        .modal {
-            transition: opacity 0.3s ease-in-out;
-            opacity: 0;
-            pointer-events: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-        }
+    .brand-font{ font-family: Orbitron, Inter, sans-serif; }
 
-        .modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+    .glass{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--glow);
+    }
+    .glass-2{
+      background: var(--card2);
+      border: 1px solid var(--stroke2);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .soft-ring:focus{
+      outline:none;
+      box-shadow: 0 0 0 4px rgba(59,130,246,.25);
+      border-color: rgba(59,130,246,.55) !important;
+    }
 
-        .modal-content {
-            transform: scale(0.9);
-            transition: transform 0.3s ease-in-out;
-        }
+    .gradient-border{ position: relative; border-radius: 1.25rem; }
+    .gradient-border:before{
+      content:"";
+      position:absolute; inset:-1px; border-radius: inherit; padding:1px;
+      background: linear-gradient(90deg, rgba(59,130,246,.7), rgba(168,85,247,.6), rgba(34,197,94,.55));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events:none; opacity:.9;
+    }
 
-        .modal.active .modal-content {
-            transform: scale(1);
-        }
+    .pulse-dot{
+      width:10px; height:10px; border-radius:999px;
+      background:#22c55e;
+      box-shadow: 0 0 0 0 rgba(34,197,94,.55);
+      animation:pulse 1.6s infinite;
+    }
+    @keyframes pulse{
+      0%{ box-shadow:0 0 0 0 rgba(34,197,94,.55); opacity:1; }
+      70%{ box-shadow:0 0 0 10px rgba(34,197,94,0); opacity:.9; }
+      100%{ box-shadow:0 0 0 0 rgba(34,197,94,0); opacity:1; }
+    }
 
-        /* Side Drawer Transition */
-        #sideDrawer {
-            transition: transform 0.3s ease-in-out;
-        }
+    .modal{
+      transition: opacity .2s ease;
+      opacity:0; pointer-events:none;
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.70);
+      display:flex; align-items:center; justify-content:center;
+      z-index:60; padding: 18px;
+    }
+    .modal.active{ opacity:1; pointer-events:auto; }
+    .modal-panel{
+      transform: translateY(8px) scale(.98);
+      transition: transform .2s ease;
+    }
+    .modal.active .modal-panel{ transform: translateY(0) scale(1); }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3b82f6; 
-            border-radius: 4px;
-        }
-    </style>
+    #sideDrawer{ transition: transform .25s ease; }
+
+    ::-webkit-scrollbar{ width: 9px; }
+    ::-webkit-scrollbar-track{ background: rgba(255,255,255,.06); }
+    ::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(59,130,246,.75), rgba(168,85,247,.70));
+      border-radius: 12px;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col relative">
 
-    <!-- Header Section -->
-    <header class="bg-slate-900 border-b border-slate-700 py-6 text-center shadow-lg relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <!-- Hamburger Menu Button -->
-            <button onclick="toggleDrawer()" class="absolute right-0 top-0 mt-2 mr-2 md:mt-4 md:mr-4 text-white text-2xl p-2 hover:text-blue-400 transition z-20 bg-slate-800/50 rounded-lg backdrop-blur-sm border border-slate-600">
-                <i class="fas fa-bars"></i>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Nav -->
+  <div class="sticky top-0 z-50">
+    <div class="mx-auto max-w-6xl px-4 pt-4">
+      <div class="glass rounded-2xl px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-2xl grid place-items-center glass-2">
+            <i class="fa-solid fa-shield-halved text-blue-300"></i>
+          </div>
+          <div>
+            <div class="brand-font tracking-wide text-lg leading-none">44G VPN</div>
+            <div class="text-xs" style="color:var(--muted)" data-i18n="nav_sub">Fast • Unlimited • Secure</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Language Toggle -->
+          <div class="hidden sm:flex items-center gap-2 glass-2 rounded-xl p-1">
+            <button id="langEN" onclick="setLang('en')" class="px-3 py-2 rounded-lg text-sm font-semibold bg-white/10">
+              EN
             </button>
+            <button id="langSI" onclick="setLang('si')" class="px-3 py-2 rounded-lg text-sm font-semibold hover:bg-white/5">
+              සිං
+            </button>
+          </div>
 
-            <h1 class="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-4">44G VPN</h1>
-            <p class="text-slate-300 max-w-2xl mx-auto text-lg leading-relaxed">
-                Experience the fastest and Unlimited internet connection with 44G VPN. 
-                Unlock global content, protect your privacy, and enjoy seamless streaming and gaming without interruptions.
-                <br><span class="text-sm text-blue-400 mt-2 block">Use Unlimited without limit</span>
-            </p>
+          <a href="https://t.me/fortyfourgangvpn" target="_blank"
+             class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl glass-2 hover:opacity-90 transition">
+            <i class="fa-brands fa-telegram text-sky-300"></i>
+            <span class="text-sm font-semibold" data-i18n="telegram">Telegram</span>
+          </a>
+
+          <a href="https://chat.whatsapp.com/GqSN8aHQxyC6JbWLVOuFoT?mode=hqrt3" target="_blank"
+             class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 transition font-semibold">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span class="text-sm" data-i18n="whatsapp">WhatsApp</span>
+          </a>
+
+          <button onclick="toggleDrawer()" class="h-11 w-11 rounded-xl glass-2 hover:opacity-90 transition grid place-items-center">
+            <i class="fa-solid fa-bars"></i>
+          </button>
         </div>
-    </header>
-
-    <!-- Side Drawer (Right Panel) -->
-    <div id="sideOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity opacity-0"></div>
-    <div id="sideDrawer" class="fixed top-0 right-0 h-full w-72 bg-slate-900 shadow-2xl transform translate-x-full z-50 overflow-y-auto border-l border-slate-700">
-        <!-- Close Button -->
-        <div class="p-4 flex justify-between items-center border-b border-slate-700 bg-slate-950">
-            <h2 class="text-lg font-bold text-white brand-font">Menu</h2>
-            <button onclick="toggleDrawer()" class="text-slate-400 hover:text-red-400 transition"><i class="fas fa-times text-2xl"></i></button>
-        </div>
-        
-        <!-- Drawer Content -->
-        <div class="p-5 space-y-8">
-            
-            <!-- Mobile Clients -->
-            <div>
-                <h3 class="text-blue-400 font-bold mb-3 border-b border-slate-700 pb-2 flex items-center">
-                    <i class="fas fa-mobile-alt mr-2"></i> Mobile Clients
-                </h3>
-                <ul class="space-y-2">
-                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">Netmod (Android)</a></li>
-                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">V2box (Android/iOS)</a></li>
-                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">V2rayTun (Android/iOS)</a></li>
-                </ul>
-            </div>
-
-            <!-- PC Clients -->
-            <div>
-                <h3 class="text-purple-400 font-bold mb-3 border-b border-slate-700 pb-2 flex items-center">
-                    <i class="fas fa-desktop mr-2"></i> PC Clients
-                </h3>
-                <ul class="space-y-2">
-                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">Netch (Windows)</a></li>
-                    <li><a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-slate-300 text-sm transition border border-slate-700">Netmod (Windows)</a></li>
-                </ul>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="space-y-3 pt-2">
-                <a href="https://chat.whatsapp.com/GqSN8aHQxyC6JbWLVOuFoT?mode=hqrt3" target="_blank" class="block w-full bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg shadow transition flex items-center justify-center font-bold">
-                    <i class="fab fa-whatsapp text-xl mr-2"></i> Join WhatsApp
-                </a>
-                <a href="https://t.me/fortyfourgangvpn" target="_blank" class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-center py-3 rounded-lg shadow transition flex items-center justify-center font-bold">
-                    <i class="fab fa-telegram-plane text-xl mr-2"></i> Join Telegram
-                </a>
-                
-                <!-- How to Run Dropdown -->
-                <div class="pt-2">
-                    <button onclick="toggleHowToRun()" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg shadow transition flex items-center justify-center font-bold relative group">
-                        <i class="fas fa-question-circle mr-2 text-yellow-400"></i> How to run
-                        <i class="fas fa-chevron-down ml-auto mr-3 transition-transform duration-300" id="howToArrow"></i>
-                    </button>
-                    
-                    <div id="howToSubMenu" class="hidden mt-2 space-y-2 animate-fade-in-down pl-4 border-l-2 border-slate-600 ml-2">
-                        <a href="https://youtube.com/shorts/xAwLkm8hTNM?si=AjOyw0T7Ln0w4HoZ" target="_blank" class="block bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 text-sm py-2 px-3 rounded transition flex items-center">
-                            <i class="fab fa-youtube mr-2 text-red-500 group-hover:text-white"></i> How to run on Mobile
-                        </a>
-                        <a href="https://youtu.be/SfmbcI8U_kk?si=FgsCQYqpfBjaaT66" target="_blank" class="block bg-slate-800 hover:bg-red-600 hover:text-white text-slate-300 text-sm py-2 px-3 rounded transition flex items-center">
-                            <i class="fab fa-youtube mr-2 text-red-500 group-hover:text-white"></i> How to run on PC
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center text-xs text-slate-500 mt-8">
-                v2.0 | 44G VPN
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Products Section -->
-    <main class="flex-grow container mx-auto px-4 py-10">
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Product cards will be injected here by JavaScript -->
+  <!-- Hero -->
+  <header class="mx-auto max-w-6xl px-4 pt-10 pb-8">
+    <div class="grid lg:grid-cols-2 gap-8 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-2 text-sm">
+          <span class="pulse-dot"></span>
+          <span class="font-semibold" data-i18n="hero_online">Servers Online</span>
+          <span class="opacity-70" data-i18n="hero_unlimited">• Unlimited usage</span>
         </div>
-    </main>
 
-    <!-- Bottom Actions Section -->
-    <section class="bg-slate-800 py-8 border-t border-slate-700">
-        <div class="container mx-auto px-4 flex flex-wrap justify-center gap-4">
-            <button onclick="openModal('paymentModal')" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 flex items-center">
-                <i class="fas fa-credit-card mr-2"></i> Payment Details
-            </button>
-            
-            <a href="https://xmaliya.github.io/44gvpnfree/" target="_blank" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 flex items-center text-center">
-                <i class="fas fa-server mr-2"></i> 44G VPN FREE Servers
+        <h1 class="mt-4 brand-font text-4xl md:text-6xl leading-tight">
+          <span data-i18n="hero_title1">Premium VPN</span>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-300"
+                data-i18n="hero_title2">for Sri Lanka Packages</span>
+        </h1>
+
+        <p class="mt-4 text-base md:text-lg" style="color:var(--muted)" data-i18n="hero_desc">
+          Unlock Zoom / Netflix / MeetMax packages with a clean, fast connection.
+          Buy a plan, submit payment details, and get support instantly via WhatsApp.
+        </p>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button onclick="scrollToProducts()"
+                  class="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 transition font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-bolt"></i> <span data-i18n="view_packages">View Packages</span>
+          </button>
+
+          <button onclick="openModal('paymentModal')"
+                  class="px-5 py-3 rounded-2xl glass-2 hover:opacity-90 transition font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-credit-card text-yellow-300"></i> <span data-i18n="payment_details">Payment Details</span>
+          </button>
+
+          <a href="https://xmaliya.github.io/44gvpnfree/" target="_blank"
+             class="px-5 py-3 rounded-2xl glass-2 hover:opacity-90 transition font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-server text-emerald-300"></i> <span data-i18n="free_servers">Free Servers</span>
+          </a>
+        </div>
+
+        <div class="mt-8 grid grid-cols-3 gap-3">
+          <div class="glass-2 rounded-2xl p-4">
+            <div class="text-2xl font-bold">24/7</div>
+            <div class="text-xs" style="color:var(--muted)" data-i18n="stat_support">Support</div>
+          </div>
+          <div class="glass-2 rounded-2xl p-4">
+            <div class="text-2xl font-bold">30D</div>
+            <div class="text-xs" style="color:var(--muted)" data-i18n="stat_validity">Validity</div>
+          </div>
+          <div class="glass-2 rounded-2xl p-4">
+            <div class="text-2xl font-bold" data-i18n="stat_fast">Fast</div>
+            <div class="text-xs" style="color:var(--muted)" data-i18n="stat_streaming">Streaming</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- right card -->
+      <div class="gradient-border">
+        <div class="glass rounded-[1.25rem] p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm" style="color:var(--muted)" data-i18n="quick_actions">Quick Actions</div>
+              <div class="text-xl font-bold mt-1" data-i18n="join_community">Join Community</div>
+            </div>
+            <div class="h-12 w-12 rounded-2xl glass-2 grid place-items-center">
+              <i class="fa-solid fa-sparkles text-purple-300"></i>
+            </div>
+          </div>
+
+          <div class="mt-6 grid sm:grid-cols-2 gap-3">
+            <a href="https://chat.whatsapp.com/GqSN8aHQxyC6JbWLVOuFoT?mode=hqrt3" target="_blank"
+               class="rounded-2xl bg-emerald-600 hover:bg-emerald-700 transition p-4 flex items-center gap-3">
+              <div class="h-10 w-10 rounded-xl bg-white/10 grid place-items-center">
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+              </div>
+              <div>
+                <div class="font-bold leading-none" data-i18n="whatsapp">WhatsApp</div>
+                <div class="text-xs opacity-80" data-i18n="updates_support">Updates + Support</div>
+              </div>
             </a>
 
-            <button onclick="openModal('rateModal')" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 flex items-center">
-                <i class="fas fa-star mr-2"></i> Rate Us
+            <a href="https://t.me/fortyfourgangvpn" target="_blank"
+               class="rounded-2xl bg-sky-600 hover:bg-sky-700 transition p-4 flex items-center gap-3">
+              <div class="h-10 w-10 rounded-xl bg-white/10 grid place-items-center">
+                <i class="fa-brands fa-telegram text-xl"></i>
+              </div>
+              <div>
+                <div class="font-bold leading-none" data-i18n="telegram">Telegram</div>
+                <div class="text-xs opacity-80" data-i18n="news_links">News + Links</div>
+              </div>
+            </a>
+          </div>
+
+          <div class="mt-6 rounded-2xl glass-2 p-4">
+            <button onclick="toggleHowToRun()" class="w-full flex items-center gap-3">
+              <div class="h-10 w-10 rounded-xl bg-white/10 grid place-items-center">
+                <i class="fa-solid fa-circle-question text-yellow-300"></i>
+              </div>
+              <div class="text-left flex-1">
+                <div class="font-bold" data-i18n="how_to_run">How to run</div>
+                <div class="text-xs" style="color:var(--muted)" data-i18n="watch_setup">Watch setup videos for Mobile & PC</div>
+              </div>
+              <i class="fa-solid fa-chevron-down transition-transform" id="howToArrow"></i>
             </button>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-slate-950 py-6 text-center text-slate-500 text-sm">
-        <p class="brand-font text-slate-400">Powered by xMaliYa</p>
-        <p class="mt-1">&copy; 2025 All Rights Reserved.</p>
-    </footer>
-
-    <!-- Floating Support Button -->
-    <button onclick="openModal('supportModal')" class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-2xl z-40 transition transform hover:scale-110 border-2 border-blue-400">
-        <i class="fas fa-headset text-2xl"></i>
-    </button>
-
-    <!-- ================= MODALS ================= -->
-
-    <!-- 1. Buy Now Modal (Step 1) -->
-    <div id="buyStep1Modal" class="modal">
-        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600">
-            <button onclick="closeModal('buyStep1Modal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            <div id="buyStep1Content" class="text-center">
-                <!-- Content injected via JS -->
+            <div id="howToSubMenu" class="hidden mt-3 space-y-2">
+              <a href="https://youtube.com/shorts/xAwLkm8hTNM?si=AjOyw0T7Ln0w4HoZ" target="_blank"
+                 class="flex items-center gap-2 rounded-xl bg-white/5 hover:bg-red-600 transition p-3">
+                <i class="fa-brands fa-youtube text-red-500"></i>
+                <span class="text-sm font-semibold" data-i18n="how_mobile">How to run on Mobile</span>
+              </a>
+              <a href="https://youtu.be/SfmbcI8U_kk?si=FgsCQYqpfBjaaT66" target="_blank"
+                 class="flex items-center gap-2 rounded-xl bg-white/5 hover:bg-red-600 transition p-3">
+                <i class="fa-brands fa-youtube text-red-500"></i>
+                <span class="text-sm font-semibold" data-i18n="how_pc">How to run on PC</span>
+              </a>
             </div>
-            <div class="mt-6 text-center">
-                <p class="text-yellow-400 text-sm mb-4"><i class="fas fa-info-circle"></i> First make the payment, then fill in the details at checkout and submit.</p>
-                <button onclick="proceedToCheckout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">
-                    Proceed to Checkout <i class="fas fa-arrow-right ml-2"></i>
-                </button>
+          </div>
+
+          <div class="mt-5 text-xs" style="color:var(--muted)" data-i18n="tip">
+            Tip: For best speed, keep your app updated and use recommended client configs.
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filters + Products -->
+  <main id="products" class="flex-grow mx-auto max-w-6xl px-4 pb-12">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-5">
+      <div>
+        <div class="text-sm" style="color:var(--muted)" data-i18n="choose_package">Choose a package</div>
+        <h2 class="text-2xl md:text-3xl font-bold" data-i18n="available_plans">Available Plans</h2>
+      </div>
+      <div class="hidden md:flex items-center gap-2 text-sm" style="color:var(--muted)">
+        <i class="fa-solid fa-lock"></i> <span data-i18n="secure_checkout">Secure checkout via WhatsApp</span>
+      </div>
+    </div>
+
+    <!-- Search / Filter Bar -->
+    <div class="gradient-border mb-6">
+      <div class="glass rounded-[1.25rem] p-4">
+        <div class="grid md:grid-cols-4 gap-3">
+          <div class="md:col-span-2">
+            <label class="text-xs" style="color:var(--muted)" data-i18n="search_label">Search</label>
+            <div class="mt-1 relative">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-white/40"></i>
+              <input id="searchInput" type="text"
+                     class="w-full rounded-xl bg-white/5 border border-white/10 pl-10 pr-3 py-2 soft-ring"
+                     placeholder="Search plans..."
+                     oninput="applyFilters()">
             </div>
+          </div>
+
+          <div>
+            <label class="text-xs" style="color:var(--muted)" data-i18n="provider_label">Provider</label>
+            <select id="providerSelect" onchange="applyFilters()"
+                    class="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring">
+              <option value="all">All</option>
+              <option value="dialog">Dialog</option>
+              <option value="slt">SLT</option>
+              <option value="mobitel">Mobitel</option>
+              <option value="hutch">Hutch</option>
+              <option value="airtel">Airtel</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs" style="color:var(--muted)" data-i18n="category_label">Category</label>
+            <select id="tagSelect" onchange="applyFilters()"
+                    class="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring">
+              <option value="all">All</option>
+              <option value="zoom">Zoom</option>
+              <option value="netflix">Netflix</option>
+              <option value="meetmax">MeetMax</option>
+              <option value="social">Social</option>
+            </select>
+          </div>
         </div>
+
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div class="text-sm" style="color:var(--muted)">
+            <span data-i18n="showing">Showing</span> <span id="countShown" class="font-bold text-white">0</span>
+            <span data-i18n="plans">plans</span>
+          </div>
+          <button onclick="resetFilters()"
+                  class="rounded-xl px-4 py-2 bg-white/5 hover:bg-white/10 transition border border-white/10 text-sm font-semibold">
+            <i class="fa-solid fa-rotate-left mr-2"></i><span data-i18n="reset">Reset</span>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- 2. Checkout Modal (Step 2) -->
-    <div id="checkoutModal" class="modal">
-        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600 overflow-y-auto max-h-[90vh]">
-            <button onclick="closeModal('checkoutModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            <h3 class="text-2xl font-bold mb-1 text-center text-blue-400">Checkout</h3>
-            <p id="checkoutProductName" class="text-center text-slate-300 mb-6 font-semibold"></p>
-            
-            <form id="checkoutForm" onsubmit="handleCheckout(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm text-slate-400 mb-1">Your Name</label>
-                    <input type="text" id="buyerName" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none" placeholder="Enter your name">
-                </div>
-                <div>
-                    <label class="block text-sm text-slate-400 mb-1">WhatsApp Number</label>
-                    <input type="tel" id="buyerNumber" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none" placeholder="07xxxxxxxx">
-                </div>
-                <div>
-                    <label class="block text-sm text-slate-400 mb-1">Select Package</label>
-                    <select id="packageSelect" class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                        <!-- Options injected via JS -->
-                    </select>
-                </div>
-                
-                <div class="bg-slate-700/50 p-3 rounded border border-slate-600">
-                    <label class="block text-sm text-slate-400 mb-2">Payment Method</label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="paymentMethod" value="Bank Deposit" checked class="text-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">Bank Transfer</span>
-                        </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="paymentMethod" value="EzCash" class="text-blue-500 focus:ring-blue-500">
-                            <span class="ml-2">EzCash</span>
-                        </label>
-                    </div>
-                </div>
+    <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-                <div>
-                    <label class="block text-sm text-slate-400 mb-1">Payment Date & Time</label>
-                    <input type="datetime-local" id="paymentTime" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                </div>
-
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition flex items-center justify-center mt-4">
-                    <i class="fab fa-whatsapp text-xl mr-2"></i> Place Order via WhatsApp
-                </button>
-            </form>
+    <!-- Empty state -->
+    <div id="emptyState" class="hidden mt-8 gradient-border">
+      <div class="glass rounded-[1.25rem] p-8 text-center">
+        <div class="text-3xl mb-2">😕</div>
+        <div class="text-xl font-bold" data-i18n="no_results">No results</div>
+        <div class="text-sm mt-2" style="color:var(--muted)" data-i18n="try_reset">
+          Try changing filters or reset.
         </div>
+        <button onclick="resetFilters()"
+                class="mt-4 rounded-2xl bg-blue-600 hover:bg-blue-700 transition font-bold px-5 py-3">
+          <span data-i18n="reset">Reset</span>
+        </button>
+      </div>
     </div>
+  </main>
 
-    <!-- 3. Product Details Modal -->
-    <div id="detailsModal" class="modal">
-        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600">
-            <button onclick="closeModal('detailsModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            <div id="detailsContent" class="text-center">
-                <!-- Injected via JS -->
+  <!-- Footer -->
+  <footer class="mx-auto max-w-6xl px-4 pb-10">
+    <div class="glass rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-2xl glass-2 grid place-items-center">
+          <i class="fa-solid fa-wand-magic-sparkles text-purple-300"></i>
+        </div>
+        <div>
+          <div class="font-bold">44G VPN</div>
+          <div class="text-xs" style="color:var(--muted)" data-i18n="footer_sub">Powered by xMaliYa • © 2025</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="openModal('rateModal')" class="px-4 py-2 rounded-xl glass-2 hover:opacity-90 transition font-semibold">
+          <i class="fa-solid fa-star text-yellow-300 mr-2"></i> <span data-i18n="rate_us">Rate Us</span>
+        </button>
+        <button onclick="openModal('supportModal')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 transition font-semibold">
+          <i class="fa-solid fa-headset mr-2"></i> <span data-i18n="support">Support</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Support -->
+  <button onclick="openModal('supportModal')"
+          class="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-2xl bg-blue-600 hover:bg-blue-700 transition shadow-2xl grid place-items-center">
+    <i class="fa-solid fa-headset text-xl"></i>
+  </button>
+
+  <!-- Drawer -->
+  <div id="sideOverlay" onclick="toggleDrawer()" class="fixed inset-0 bg-black/60 z-40 hidden opacity-0 transition-opacity"></div>
+  <aside id="sideDrawer" class="fixed top-0 right-0 h-full w-[320px] max-w-[88vw] z-50 transform translate-x-full">
+    <div class="h-full glass border-l border-white/10">
+      <div class="p-4 flex items-center justify-between border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="h-10 w-10 rounded-2xl glass-2 grid place-items-center">
+            <i class="fa-solid fa-layer-group text-blue-300"></i>
+          </div>
+          <div>
+            <div class="font-bold" data-i18n="menu">Menu</div>
+            <div class="text-xs" style="color:var(--muted)" data-i18n="clients_links">Clients & Links</div>
+          </div>
+        </div>
+        <button onclick="toggleDrawer()" class="h-10 w-10 rounded-xl glass-2 grid place-items-center hover:opacity-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-6 overflow-y-auto h-[calc(100%-72px)]">
+        <!-- small language toggle inside drawer for mobile -->
+        <div class="sm:hidden glass-2 rounded-2xl p-2 flex items-center gap-2">
+          <button id="langEN_m" onclick="setLang('en')" class="flex-1 px-3 py-2 rounded-xl text-sm font-semibold bg-white/10">English</button>
+          <button id="langSI_m" onclick="setLang('si')" class="flex-1 px-3 py-2 rounded-xl text-sm font-semibold hover:bg-white/5">සිංහල</button>
+        </div>
+
+        <div class="glass-2 rounded-2xl p-4">
+          <div class="text-sm font-bold mb-3 text-blue-300"><i class="fa-solid fa-mobile-screen mr-2"></i><span data-i18n="mobile_clients">Mobile Clients</span></div>
+          <div class="space-y-2 text-sm">
+            <a href="#" class="block rounded-xl bg-white/5 hover:bg-white/10 transition p-3">Netmod (Android)</a>
+            <a href="#" class="block rounded-xl bg-white/5 hover:bg-white/10 transition p-3">V2box (Android/iOS)</a>
+            <a href="#" class="block rounded-xl bg-white/5 hover:bg-white/10 transition p-3">V2rayTun (Android/iOS)</a>
+          </div>
+        </div>
+
+        <div class="glass-2 rounded-2xl p-4">
+          <div class="text-sm font-bold mb-3 text-purple-300"><i class="fa-solid fa-desktop mr-2"></i><span data-i18n="pc_clients">PC Clients</span></div>
+          <div class="space-y-2 text-sm">
+            <a href="#" class="block rounded-xl bg-white/5 hover:bg-white/10 transition p-3">Netch (Windows)</a>
+            <a href="#" class="block rounded-xl bg-white/5 hover:bg-white/10 transition p-3">Netmod (Windows)</a>
+          </div>
+        </div>
+
+        <div class="grid gap-3">
+          <a href="https://chat.whatsapp.com/GqSN8aHQxyC6JbWLVOuFoT?mode=hqrt3" target="_blank"
+             class="rounded-2xl bg-emerald-600 hover:bg-emerald-700 transition p-4 font-bold flex items-center justify-center gap-2">
+            <i class="fa-brands fa-whatsapp text-lg"></i> <span data-i18n="join_whatsapp">Join WhatsApp</span>
+          </a>
+          <a href="https://t.me/fortyfourgangvpn" target="_blank"
+             class="rounded-2xl bg-sky-600 hover:bg-sky-700 transition p-4 font-bold flex items-center justify-center gap-2">
+            <i class="fa-brands fa-telegram text-lg"></i> <span data-i18n="join_telegram">Join Telegram</span>
+          </a>
+          <button onclick="openModal('paymentModal')"
+                  class="rounded-2xl glass-2 hover:opacity-90 transition p-4 font-bold flex items-center justify-center gap-2">
+            <i class="fa-solid fa-credit-card text-yellow-300"></i> <span data-i18n="payment_details">Payment Details</span>
+          </button>
+        </div>
+
+        <div class="text-center text-xs" style="color:var(--muted)">
+          v4.0 • 44G VPN
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Buy Step 1 -->
+  <div id="buyStep1Modal" class="modal">
+    <div class="modal-panel w-full max-w-md gradient-border">
+      <div class="glass rounded-[1.25rem] p-6 relative">
+        <button onclick="closeModal('buyStep1Modal')" class="absolute top-4 right-4 h-10 w-10 rounded-xl glass-2 grid place-items-center hover:opacity-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div id="buyStep1Content" class="text-center"></div>
+        <div class="mt-6">
+          <div class="rounded-2xl glass-2 p-4 text-sm" style="color:var(--muted)">
+            <i class="fa-solid fa-circle-info text-yellow-300 mr-2"></i>
+            <span data-i18n="payment_first">First make the payment, then fill in the details at checkout and submit.</span>
+          </div>
+          <button onclick="proceedToCheckout()" class="mt-3 w-full rounded-2xl bg-blue-600 hover:bg-blue-700 transition font-bold py-3">
+            <span data-i18n="proceed_checkout">Proceed to Checkout</span> <i class="fa-solid fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout -->
+  <div id="checkoutModal" class="modal">
+    <div class="modal-panel w-full max-w-md gradient-border">
+      <div class="glass rounded-[1.25rem] p-6 relative max-h-[90vh] overflow-y-auto">
+        <button onclick="closeModal('checkoutModal')" class="absolute top-4 right-4 h-10 w-10 rounded-xl glass-2 grid place-items-center hover:opacity-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="text-center">
+          <div class="text-sm" style="color:var(--muted)" data-i18n="checkout">Checkout</div>
+          <h3 class="text-2xl font-bold mt-1" data-i18n="submit_order">Submit Order</h3>
+          <p id="checkoutProductName" class="mt-1 text-sm font-semibold text-blue-200"></p>
+        </div>
+
+        <form id="checkoutForm" onsubmit="handleCheckout(event)" class="mt-6 space-y-4">
+          <div>
+            <label class="block text-sm mb-1" style="color:var(--muted)" data-i18n="your_name">Your Name</label>
+            <input id="buyerName" type="text" required
+                   class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring"
+                   placeholder="Enter your name">
+          </div>
+
+          <div>
+            <label class="block text-sm mb-1" style="color:var(--muted)" data-i18n="wa_number">WhatsApp Number</label>
+            <input id="buyerNumber" type="tel" required
+                   class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring"
+                   placeholder="07xxxxxxxx">
+          </div>
+
+          <div>
+            <label class="block text-sm mb-1" style="color:var(--muted)" data-i18n="select_package">Select Package</label>
+            <select id="packageSelect" class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring"></select>
+          </div>
+
+          <div class="rounded-2xl glass-2 p-4">
+            <div class="text-sm font-semibold mb-2" style="color:var(--muted)" data-i18n="payment_method">Payment Method</div>
+            <div class="flex gap-4 text-sm">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="paymentMethod" value="Bank Deposit" checked>
+                <span data-i18n="bank_transfer">Bank Transfer</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="paymentMethod" value="EzCash">
+                <span>EzCash</span>
+              </label>
             </div>
-        </div>
+          </div>
+
+          <div>
+            <label class="block text-sm mb-1" style="color:var(--muted)" data-i18n="payment_time">Payment Date & Time</label>
+            <input id="paymentTime" type="datetime-local" required
+                   class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring">
+          </div>
+
+          <button type="submit"
+                  class="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 transition font-bold py-3 flex items-center justify-center gap-2">
+            <i class="fa-brands fa-whatsapp text-lg"></i> <span data-i18n="place_order">Place Order via WhatsApp</span>
+          </button>
+        </form>
+      </div>
     </div>
+  </div>
 
-    <!-- 4. Payment Details Modal -->
-    <div id="paymentModal" class="modal">
-        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600">
-            <button onclick="closeModal('paymentModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            <h3 class="text-2xl font-bold mb-4 text-center text-yellow-400">Payment Details</h3>
-            
-            <div class="space-y-4">
-                <div class="bg-slate-700 p-4 rounded-lg relative group">
-                    <h4 class="text-blue-300 font-bold mb-1">Bank Transfer - BOC</h4>
-                    <p class="text-sm">Account Name: <span class="text-white">A.M.T.M.ADHIKARI</span></p>
-                    <p class="text-sm">Account No: <span id="bankAcc" class="text-white font-mono">9799939</span></p>
-                    <p class="text-sm">Branch: <span class="text-white">Kurunegala</span></p>
-                    <button onclick="copyToClipboard('bankAcc')" class="absolute top-2 right-2 text-slate-400 hover:text-green-400 p-2"><i class="fas fa-copy"></i></button>
-                </div>
+  <!-- ORDER SUCCESS (NEW) -->
+  <div id="orderSuccessModal" class="modal">
+    <div class="modal-panel w-full max-w-md gradient-border">
+      <div class="glass rounded-[1.25rem] p-6 relative">
+        <button onclick="closeModal('orderSuccessModal')" class="absolute top-4 right-4 h-10 w-10 rounded-xl glass-2 grid place-items-center hover:opacity-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
 
-                <div class="bg-slate-700 p-4 rounded-lg relative group">
-                    <h4 class="text-green-400 font-bold mb-1">EzCash</h4>
-                    <p class="text-sm">Number: <span id="ezNumber" class="text-white font-mono">0771273983</span></p>
-                    <button onclick="copyToClipboard('ezNumber')" class="absolute top-2 right-2 text-slate-400 hover:text-green-400 p-2"><i class="fas fa-copy"></i></button>
-                </div>
+        <div class="text-center">
+          <div class="mx-auto h-14 w-14 rounded-2xl bg-emerald-600/20 border border-emerald-400/20 grid place-items-center">
+            <i class="fa-solid fa-circle-check text-emerald-300 text-3xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold mt-4" data-i18n="success_title">Order Sent!</h3>
+          <p class="text-sm mt-2" style="color:var(--muted)" data-i18n="success_desc">
+            WhatsApp opened with your order message. Please press <b>Send</b> in WhatsApp to complete the request.
+          </p>
+        </div>
+
+        <div class="mt-5 rounded-2xl glass-2 p-4 text-left text-sm">
+          <div class="font-bold text-blue-200 mb-2" data-i18n="order_summary">Order Summary</div>
+          <div style="color:var(--muted)">
+            <div><span class="opacity-80" data-i18n="product">Product</span>: <span id="successProduct" class="text-white font-semibold"></span></div>
+            <div class="mt-1"><span class="opacity-80" data-i18n="selected_pkg">Selected Pkg</span>: <span id="successPkg" class="text-white font-semibold"></span></div>
+            <div class="mt-1"><span class="opacity-80" data-i18n="pay_method">Payment Method</span>: <span id="successPay" class="text-white font-semibold"></span></div>
+          </div>
+        </div>
+
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <a id="openWhatsAppAgain" href="#" target="_blank"
+             class="rounded-2xl bg-emerald-600 hover:bg-emerald-700 transition font-bold py-3 text-center">
+            <i class="fa-brands fa-whatsapp mr-2"></i><span data-i18n="open_whatsapp">Open WhatsApp</span>
+          </a>
+          <button onclick="closeModal('orderSuccessModal'); scrollToProducts();"
+                  class="rounded-2xl bg-white/5 hover:bg-white/10 transition border border-white/10 font-bold py-3">
+            <span data-i18n="back_plans">Back to Plans</span>
+          </button>
+        </div>
+
+        <div class="mt-4 text-xs text-center" style="color:var(--muted)" data-i18n="success_tip">
+          If WhatsApp didn’t open, tap “Open WhatsApp” again.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details -->
+  <div id="detailsModal" class="modal">
+    <div class="modal-panel w-full max-w-md gradient-border">
+      <div class="glass rounded-[1.25rem] p-6 relative">
+        <button onclick="closeModal('detailsModal')" class="absolute top-4 right-4 h-10 w-10 rounded-xl glass-2 grid place-items-center hover:opacity-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div id="detailsContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment -->
+  <div id="paymentModal" class="modal">
+    <div class="modal-panel w-full max-w-md gradient-border">
+      <div class="glass rounded-[1.25rem] p-6 relative">
+        <button onclick="closeModal('paymentModal')" class="absolute top-4 right-4 h-10 w-10 rounded-xl glass-2 grid place-items-center hover:opacity-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="text-center">
+          <div class="text-sm" style="color:var(--muted)" data-i18n="payment">Payment</div>
+          <h3 class="text-2xl font-bold mt-1" data-i18n="payment_details">Payment Details</h3>
+        </div>
+
+        <div class="mt-6 space-y-3">
+          <div class="rounded-2xl glass-2 p-4 relative">
+            <div class="font-bold text-blue-200">Bank Transfer - BOC</div>
+            <div class="text-sm mt-2" style="color:var(--muted)">
+              Account Name: <span class="text-white">A.M.T.M.ADHIKARI</span><br>
+              Account No: <span id="bankAcc" class="text-white font-mono">9799939</span><br>
+              Branch: <span class="text-white">Kurunegala</span>
             </div>
-        </div>
-    </div>
+            <button onclick="copyToClipboard('bankAcc')" class="absolute top-3 right-3 h-10 w-10 rounded-xl bg-white/5 hover:bg-white/10 transition grid place-items-center">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
 
-    <!-- 5. Rate Us Modal -->
-    <div id="rateModal" class="modal">
-        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 relative border border-slate-600">
-            <button onclick="closeModal('rateModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            <h3 class="text-2xl font-bold mb-4 text-center text-purple-400">Rate Us</h3>
-            <form onsubmit="submitRating(event)">
-                <div class="flex justify-center mb-4 space-x-2">
-                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(1)" id="star1"></i>
-                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(2)" id="star2"></i>
-                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(3)" id="star3"></i>
-                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(4)" id="star4"></i>
-                    <i class="fas fa-star text-2xl cursor-pointer text-slate-600 hover:text-yellow-400 transition" onclick="setRating(5)" id="star5"></i>
+          <div class="rounded-2xl glass-2 p-4 relative">
+            <div class="font-bold text-emerald-200">EzCash</div>
+            <div class="text-sm mt-2" style="color:var(--muted)">
+              Number: <span id="ezNumber" class="text-white font-mono">0771273983</span>
+            </div>
+            <button onclick="copyToClipboard('ezNumber')" class="absolute top-3 right-3 h-10 w-10 rounded-xl bg-white/5 hover:bg-white/10 transition grid place-items-center">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+
+          <div class="rounded-2xl bg-yellow-500/10 border border-yellow-400/20 p-4 text-sm" style="color:var(--muted)">
+            <i class="fa-solid fa-circle-info text-yellow-300 mr-2"></i>
+            <span data-i18n="after_pay">After payment, open a package and submit checkout details.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rate -->
+  <div id="rateModal" class="modal">
+    <div class="modal-panel w-full max-w-md gradient-border">
+      <div class="glass rounded-[1.25rem] p-6 relative">
+        <button onclick="closeModal('rateModal')" class="absolute top-4 right-4 h-10 w-10 rounded-xl glass-2 grid place-items-center hover:opacity-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="text-center">
+          <div class="text-sm" style="color:var(--muted)" data-i18n="feedback">Feedback</div>
+          <h3 class="text-2xl font-bold mt-1" data-i18n="rate_us">Rate Us</h3>
+        </div>
+
+        <form onsubmit="submitRating(event)" class="mt-6">
+          <div class="flex justify-center gap-2 mb-4">
+            <i class="fa-solid fa-star text-2xl cursor-pointer text-white/20 hover:text-yellow-300 transition" onclick="setRating(1)" id="star1"></i>
+            <i class="fa-solid fa-star text-2xl cursor-pointer text-white/20 hover:text-yellow-300 transition" onclick="setRating(2)" id="star2"></i>
+            <i class="fa-solid fa-star text-2xl cursor-pointer text-white/20 hover:text-yellow-300 transition" onclick="setRating(3)" id="star3"></i>
+            <i class="fa-solid fa-star text-2xl cursor-pointer text-white/20 hover:text-yellow-300 transition" onclick="setRating(4)" id="star4"></i>
+            <i class="fa-solid fa-star text-2xl cursor-pointer text-white/20 hover:text-yellow-300 transition" onclick="setRating(5)" id="star5"></i>
+          </div>
+
+          <input type="hidden" id="ratingValue" value="0">
+          <input type="text" id="raterName" required placeholder="Your Name"
+                 class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring mb-3">
+
+          <textarea id="rateComment" rows="3" placeholder="Write a comment..."
+                    class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring mb-4"></textarea>
+
+          <button type="submit" class="w-full rounded-2xl bg-purple-600 hover:bg-purple-700 transition font-bold py-3">
+            <span data-i18n="submit_rating">Submit Rating</span> <i class="fa-brands fa-whatsapp ml-2"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Support -->
+  <div id="supportModal" class="modal">
+    <div class="modal-panel w-full max-w-md gradient-border">
+      <div class="glass rounded-[1.25rem] p-6 relative">
+        <button onclick="closeModal('supportModal')" class="absolute top-4 right-4 h-10 w-10 rounded-xl glass-2 grid place-items-center hover:opacity-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="text-center">
+          <div class="text-sm" style="color:var(--muted)" data-i18n="customer_support">Customer Support</div>
+          <h3 class="text-2xl font-bold mt-1" data-i18n="message_us">Message Us</h3>
+          <p class="text-xs mt-2" style="color:var(--muted)" data-i18n="reply_fast">We usually reply fast on WhatsApp.</p>
+        </div>
+
+        <form onsubmit="submitSupport(event)" class="mt-6">
+          <textarea id="supportMsg" rows="4" required placeholder="Type your message..."
+                    class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 soft-ring mb-4"></textarea>
+          <button type="submit" class="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 transition font-bold py-3">
+            <span data-i18n="send_whatsapp">Send to WhatsApp</span> <i class="fa-brands fa-whatsapp ml-2"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ======= CONFIG =======
+    const WHATSAPP_NUMBER = "94771273983"; // 94xxxxxxxxx
+
+    // Add provider + tag to each product for filtering
+    const products = [
+      { id:1, provider:"dialog",  tag:"zoom",    name:"DIALOG ZOOM", image:"https://placehold.co/800x500/0b1227/60a5fa?text=DIALOG+ZOOM",
+        prices:["100GB - 200 LKR","200GB - 300 LKR","300GB - 400 LKR","Unlimited - 500 LKR"], duration:"Valid for 30 Days",
+        plans:["Dialog Router 298,724 work and learn lite packages"], status:"Available" },
+
+      { id:2, provider:"slt",     tag:"zoom",    name:"SLT4G / FIBER ZOOM", image:"https://placehold.co/800x500/0b1227/a78bfa?text=SLT+FIBER+ZOOM",
+        prices:["100GB - 200 LKR","200GB - 300 LKR","300GB - 400 LKR","Unlimited - 500 LKR"], duration:"Valid for 30 Days",
+        plans:["SLT 4G and Fiber postpaid router Meetmax addon package."], status:"Available" },
+
+      { id:3, provider:"slt",     tag:"netflix", name:"SLT4G / FIBER NETFLIX", image:"https://placehold.co/800x500/0b1227/f472b6?text=SLT+NETFLIX",
+        prices:["100GB - 200 LKR","200GB - 300 LKR","300GB - 400 LKR","Unlimited - 500 LKR"], duration:"Valid for 30 Days",
+        plans:["SLT 4G and Fiber postpaid router Entertainment addon package."], status:"Available" },
+
+      { id:4, provider:"mobitel", tag:"zoom",    name:"MOBITEL ZOOM", image:"https://placehold.co/800x500/0b1227/34d399?text=MOBITEL+ZOOM",
+        prices:["100GB - 250 LKR","200GB - 350 LKR","300GB - 450 LKR","500GB - 600 LKR"], duration:"Valid for 30 Days",
+        plans:["Mobitel Mobile 222 zoom package."], status:"Available" },
+
+      { id:5, provider:"hutch",   tag:"social",  name:"HUTCH ZOOM", image:"https://placehold.co/800x500/0b1227/fbbf24?text=HUTCH+SOCIAL",
+        prices:["100GB - 250 LKR","200GB - 350 LKR","300GB - 450 LKR","Unlimited - 600 LKR"], duration:"Valid for 30 Days",
+        plans:["Hutch 224 zoom package."], status:"Available" },
+
+      { id:6, provider:"airtel",  tag:"zoom",    name:"AIRTEL ZOOM", image:"https://placehold.co/800x500/0b1227/f87171?text=AIRTEL+ZOOM",
+        prices:["100GB - 250 LKR","200GB - 350 LKR","300GB - 450 LKR","500GB - 600 LKR"], duration:"Valid for 30 Days",
+        plans:["Airtel 215 Zoom package."], status:"Available" },
+    ];
+
+    // ======= I18N (EN / SI) =======
+    const I18N = {
+      en: {
+        nav_sub: "Fast • Unlimited • Secure",
+        telegram: "Telegram",
+        whatsapp: "WhatsApp",
+        hero_online: "Servers Online",
+        hero_unlimited: "• Unlimited usage",
+        hero_title1: "Premium VPN",
+        hero_title2: "for Sri Lanka Packages",
+        hero_desc: "Unlock Zoom / Netflix / MeetMax packages with a clean, fast connection. Buy a plan, submit payment details, and get support instantly via WhatsApp.",
+        view_packages: "View Packages",
+        payment_details: "Payment Details",
+        free_servers: "Free Servers",
+        stat_support: "Support",
+        stat_validity: "Validity",
+        stat_fast: "Fast",
+        stat_streaming: "Streaming",
+        quick_actions: "Quick Actions",
+        join_community: "Join Community",
+        updates_support: "Updates + Support",
+        news_links: "News + Links",
+        how_to_run: "How to run",
+        watch_setup: "Watch setup videos for Mobile & PC",
+        how_mobile: "How to run on Mobile",
+        how_pc: "How to run on PC",
+        tip: "Tip: For best speed, keep your app updated and use recommended client configs.",
+        choose_package: "Choose a package",
+        available_plans: "Available Plans",
+        secure_checkout: "Secure checkout via WhatsApp",
+        search_label: "Search",
+        provider_label: "Provider",
+        category_label: "Category",
+        showing: "Showing",
+        plans: "plans",
+        reset: "Reset",
+        no_results: "No results",
+        try_reset: "Try changing filters or reset.",
+        footer_sub: "Powered by xMaliYa • © 2025",
+        rate_us: "Rate Us",
+        support: "Support",
+        menu: "Menu",
+        clients_links: "Clients & Links",
+        mobile_clients: "Mobile Clients",
+        pc_clients: "PC Clients",
+        join_whatsapp: "Join WhatsApp",
+        join_telegram: "Join Telegram",
+        payment_first: "First make the payment, then fill in the details at checkout and submit.",
+        proceed_checkout: "Proceed to Checkout",
+        checkout: "Checkout",
+        submit_order: "Submit Order",
+        your_name: "Your Name",
+        wa_number: "WhatsApp Number",
+        select_package: "Select Package",
+        payment_method: "Payment Method",
+        bank_transfer: "Bank Transfer",
+        payment_time: "Payment Date & Time",
+        place_order: "Place Order via WhatsApp",
+        payment: "Payment",
+        after_pay: "After payment, open a package and submit checkout details.",
+        feedback: "Feedback",
+        submit_rating: "Submit Rating",
+        customer_support: "Customer Support",
+        message_us: "Message Us",
+        reply_fast: "We usually reply fast on WhatsApp.",
+        send_whatsapp: "Send to WhatsApp",
+        success_title: "Order Sent!",
+        success_desc: "WhatsApp opened with your order message. Please press Send in WhatsApp to complete the request.",
+        order_summary: "Order Summary",
+        product: "Product",
+        selected_pkg: "Selected Pkg",
+        pay_method: "Payment Method",
+        open_whatsapp: "Open WhatsApp",
+        back_plans: "Back to Plans",
+        success_tip: "If WhatsApp didn’t open, tap “Open WhatsApp” again.",
+      },
+      si: {
+        nav_sub: "වේගවත් • අසීමිත • ආරක්ෂිත",
+        telegram: "ටෙලිග්‍රෑම්",
+        whatsapp: "වට්සැප්",
+        hero_online: "සර්වර්ස් ක්‍රියාත්මකයි",
+        hero_unlimited: "• අසීමිත භාවිතය",
+        hero_title1: "ප්‍රිමියම් VPN",
+        hero_title2: "ශ්‍රී ලංකා පැකේජ සඳහා",
+        hero_desc: "Zoom / Netflix / MeetMax පැකේජ විවෘත කරන්න. පැකේජයක් තෝරා ගෙවීම කර පසුව විස්තර යොදලා WhatsApp මඟින් ඉක්මනින් සම්බන්ධ වන්න.",
+        view_packages: "පැකේජ බලන්න",
+        payment_details: "ගෙවීම් විස්තර",
+        free_servers: "ෆ්‍රී සර්වර්ස්",
+        stat_support: "සහාය",
+        stat_validity: "වලංගුතාව",
+        stat_fast: "වේගවත්",
+        stat_streaming: "ස්ට්‍රීමිං",
+        quick_actions: "ඉක්මන් ක්‍රියා",
+        join_community: "කණ්ඩායමට එක්වන්න",
+        updates_support: "අලුත් තොරතුරු + සහාය",
+        news_links: "පුවත් + ලින්ක්",
+        how_to_run: "භාවිතා කරන විදිහ",
+        watch_setup: "Mobile & PC සැකසීම වීඩියෝ බලන්න",
+        how_mobile: "Mobile සඳහා වීඩියෝ",
+        how_pc: "PC සඳහා වීඩියෝ",
+        tip: "ඉඟිය: හොඳම වේගය සඳහා app එක update කරගෙන යන්න.",
+        choose_package: "පැකේජයක් තෝරන්න",
+        available_plans: "ලබා ගත හැකි පැකේජ",
+        secure_checkout: "WhatsApp මඟින් ආරක්ෂිතව",
+        search_label: "සෙවීම",
+        provider_label: "ප්‍රොවයිඩර්",
+        category_label: "වර්ගය",
+        showing: "පෙන්වන්නේ",
+        plans: "පැකේජ",
+        reset: "රීසෙට්",
+        no_results: "ප්‍රතිඵල නැහැ",
+        try_reset: "ෆිල්ටර් වෙනස් කරන්න හෝ රීසෙට් කරන්න.",
+        footer_sub: "Powered by xMaliYa • © 2025",
+        rate_us: "රේට් කරන්න",
+        support: "සහාය",
+        menu: "මෙනු",
+        clients_links: "Clients & Links",
+        mobile_clients: "Mobile Clients",
+        pc_clients: "PC Clients",
+        join_whatsapp: "WhatsApp එක්වන්න",
+        join_telegram: "Telegram එක්වන්න",
+        payment_first: "මුලින් ගෙවීම කරලා, පසුව checkout එකේ විස්තර දාලා submit කරන්න.",
+        proceed_checkout: "Checkout වෙත",
+        checkout: "Checkout",
+        submit_order: "ඇණවුම යවන්න",
+        your_name: "ඔබගේ නම",
+        wa_number: "WhatsApp අංකය",
+        select_package: "පැකේජ තෝරන්න",
+        payment_method: "ගෙවීමේ ක්‍රමය",
+        bank_transfer: "බැංකු මාරු",
+        payment_time: "ගෙවූ දිනය/වේලාව",
+        place_order: "WhatsApp හරහා ඇණවුම යවන්න",
+        payment: "ගෙවීම",
+        after_pay: "ගෙවීමෙන් පසුව පැකේජය තෝරා checkout විස්තර යවන්න.",
+        feedback: "ප්‍රතිචාර",
+        submit_rating: "රේටින් යවන්න",
+        customer_support: "පාරිභෝගික සහාය",
+        message_us: "පණිවිඩයක් යවන්න",
+        reply_fast: "WhatsApp මඟින් ඉක්මනින් පිළිතුරු ලැබේ.",
+        send_whatsapp: "WhatsAppට යවන්න",
+        success_title: "ඇණවුම සූදානම්!",
+        success_desc: "WhatsApp එකට ඔබගේ ඇණවුම් පණිවිඩය ගියේය. WhatsApp එකේ Send ඔබන්න.",
+        order_summary: "ඇණවුම් සාරාංශය",
+        product: "නිෂ්පාදනය",
+        selected_pkg: "තෝරාගත් පැකේජය",
+        pay_method: "ගෙවීමේ ක්‍රමය",
+        open_whatsapp: "WhatsApp විවෘත කරන්න",
+        back_plans: "පැකේජ වෙත",
+        success_tip: "WhatsApp open නොවුණා නම් “Open WhatsApp” නැවත ඔබන්න.",
+      }
+    };
+
+    let LANG = "en";
+
+    function setLang(lang){
+      LANG = lang;
+      // buttons state
+      const enBtn = document.getElementById("langEN");
+      const siBtn = document.getElementById("langSI");
+      const enBtnM = document.getElementById("langEN_m");
+      const siBtnM = document.getElementById("langSI_m");
+
+      if (enBtn && siBtn){
+        enBtn.className = `px-3 py-2 rounded-lg text-sm font-semibold ${lang==="en" ? "bg-white/10" : "hover:bg-white/5"}`;
+        siBtn.className = `px-3 py-2 rounded-lg text-sm font-semibold ${lang==="si" ? "bg-white/10" : "hover:bg-white/5"}`;
+      }
+      if (enBtnM && siBtnM){
+        enBtnM.className = `flex-1 px-3 py-2 rounded-xl text-sm font-semibold ${lang==="en" ? "bg-white/10" : "hover:bg-white/5"}`;
+        siBtnM.className = `flex-1 px-3 py-2 rounded-xl text-sm font-semibold ${lang==="si" ? "bg-white/10" : "hover:bg-white/5"}`;
+      }
+
+      // placeholders
+      document.getElementById("searchInput").placeholder = (lang==="si") ? "පැකේජ සෙවීම..." : "Search plans...";
+      document.getElementById("buyerName").placeholder = (lang==="si") ? "ඔබගේ නම" : "Enter your name";
+      document.getElementById("buyerNumber").placeholder = (lang==="si") ? "07xxxxxxxx" : "07xxxxxxxx";
+      document.getElementById("raterName").placeholder = (lang==="si") ? "ඔබගේ නම" : "Your Name";
+      document.getElementById("rateComment").placeholder = (lang==="si") ? "ඔබගේ අදහස..." : "Write a comment...";
+      document.getElementById("supportMsg").placeholder = (lang==="si") ? "ඔබගේ පණිවිඩය..." : "Type your message...";
+
+      // translate nodes
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key = el.getAttribute("data-i18n");
+        if (I18N[lang] && I18N[lang][key]) el.innerHTML = I18N[lang][key];
+      });
+    }
+
+    // ======= UI helpers =======
+    function scrollToProducts(){ document.getElementById("products").scrollIntoView({ behavior:"smooth" }); }
+
+    function badgeColor(tag){
+      const t = (tag || "").toLowerCase();
+      if (t.includes("netflix")) return "bg-pink-500/15 text-pink-200 border-pink-400/20";
+      if (t.includes("meet")) return "bg-purple-500/15 text-purple-200 border-purple-400/20";
+      if (t.includes("social")) return "bg-yellow-500/15 text-yellow-200 border-yellow-400/20";
+      return "bg-blue-500/15 text-blue-200 border-blue-400/20";
+    }
+
+    function prettyProvider(p){
+      const map = { dialog:"Dialog", slt:"SLT", mobitel:"Mobitel", hutch:"Hutch", airtel:"Airtel" };
+      return map[p] || p;
+    }
+
+    // ======= Render + Filter =======
+    function getFilteredProducts(){
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const provider = document.getElementById("providerSelect").value;
+      const tag = document.getElementById("tagSelect").value;
+
+      return products.filter(p=>{
+        const matchesProvider = provider === "all" ? true : p.provider === provider;
+        const matchesTag = tag === "all" ? true : (p.tag || "").toLowerCase() === tag;
+        const hay = `${p.name} ${p.provider} ${p.tag} ${(p.plans||[]).join(" ")} ${(p.prices||[]).join(" ")}`.toLowerCase();
+        const matchesText = q ? hay.includes(q) : true;
+        return matchesProvider && matchesTag && matchesText;
+      });
+    }
+
+    function renderProducts(list){
+      const grid = document.getElementById("product-grid");
+      const empty = document.getElementById("emptyState");
+      const count = document.getElementById("countShown");
+
+      count.textContent = String(list.length);
+
+      if (!list.length){
+        grid.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+      }
+      empty.classList.add("hidden");
+
+      grid.innerHTML = list.map(p => `
+        <article class="gradient-border">
+          <div class="glass rounded-[1.25rem] overflow-hidden">
+            <div class="relative">
+              <img src="${p.image}" alt="${p.name}" class="w-full h-48 object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+
+              <div class="absolute top-3 left-3 inline-flex items-center gap-2 px-3 py-1 rounded-full border ${badgeColor(p.tag)} backdrop-blur">
+                <i class="fa-solid fa-bolt text-xs"></i>
+                <span class="text-xs font-semibold">${(p.tag||"plan").toUpperCase()}</span>
+              </div>
+
+              <div class="absolute top-3 right-3 px-3 py-1 rounded-full glass-2 text-xs font-semibold">
+                ${prettyProvider(p.provider)}
+              </div>
+            </div>
+
+            <div class="p-5">
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="text-lg font-bold">${p.name}</h3>
+                <div class="inline-flex items-center gap-2 text-xs">
+                  <span class="pulse-dot"></span>
+                  <span class="font-semibold text-emerald-200">${p.status}</span>
                 </div>
-                <input type="hidden" id="ratingValue" value="0">
-                <input type="text" id="raterName" placeholder="Your Name" required class="w-full bg-slate-700 border border-slate-600 rounded p-2 mb-3 text-white focus:outline-none">
-                <textarea id="rateComment" rows="3" placeholder="Write a comment..." class="w-full bg-slate-700 border border-slate-600 rounded p-2 mb-4 text-white focus:outline-none"></textarea>
-                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition">
-                    Submit Rating <i class="fab fa-whatsapp ml-1"></i>
+              </div>
+
+              <div class="mt-3 text-sm" style="color:var(--muted)">
+                <i class="fa-regular fa-calendar mr-2"></i>${p.duration}
+              </div>
+
+              <div class="mt-4 grid grid-cols-2 gap-3">
+                <button onclick="openBuyModal(${p.id})"
+                        class="rounded-2xl bg-blue-600 hover:bg-blue-700 transition font-semibold py-2.5">
+                  ${(LANG==="si") ? "මිලදී ගන්න" : "Buy Now"}
                 </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 6. Support Modal -->
-    <div id="supportModal" class="modal">
-        <div class="modal-content bg-slate-800 rounded-xl shadow-2xl w-full max-w-sm p-6 relative border border-slate-600">
-            <button onclick="closeModal('supportModal')" class="absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            <h3 class="text-xl font-bold mb-4 text-center text-blue-400">Customer Support</h3>
-            <p class="text-xs text-slate-400 text-center mb-4">How can we help you today?</p>
-            <form onsubmit="submitSupport(event)">
-                <textarea id="supportMsg" rows="4" placeholder="Type your message..." required class="w-full bg-slate-700 border border-slate-600 rounded p-2 mb-4 text-white focus:outline-none"></textarea>
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded transition">
-                    Send to WhatsApp <i class="fab fa-whatsapp ml-1"></i>
+                <button onclick="openDetailsModal(${p.id})"
+                        class="rounded-2xl bg-white/5 hover:bg-white/10 transition font-semibold py-2.5 border border-white/10">
+                  ${(LANG==="si") ? "විස්තර" : "Details"}
                 </button>
-            </form>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function applyFilters(){
+      renderProducts(getFilteredProducts());
+    }
+
+    function resetFilters(){
+      document.getElementById("searchInput").value = "";
+      document.getElementById("providerSelect").value = "all";
+      document.getElementById("tagSelect").value = "all";
+      applyFilters();
+    }
+
+    // ======= Drawer =======
+    function toggleDrawer(){
+      const drawer = document.getElementById("sideDrawer");
+      const overlay = document.getElementById("sideOverlay");
+
+      if (drawer.classList.contains("translate-x-full")){
+        drawer.classList.remove("translate-x-full");
+        overlay.classList.remove("hidden");
+        setTimeout(() => overlay.classList.remove("opacity-0"), 10);
+      } else {
+        drawer.classList.add("translate-x-full");
+        overlay.classList.add("opacity-0");
+        setTimeout(() => overlay.classList.add("hidden"), 250);
+      }
+    }
+
+    function toggleHowToRun(){
+      const menu = document.getElementById("howToSubMenu");
+      const arrow = document.getElementById("howToArrow");
+      if (menu.classList.contains("hidden")){
+        menu.classList.remove("hidden");
+        arrow.classList.add("rotate-180");
+      } else {
+        menu.classList.add("hidden");
+        arrow.classList.remove("rotate-180");
+      }
+    }
+
+    // ======= Modals =======
+    function openModal(id){ document.getElementById(id).classList.add("active"); }
+    function closeModal(id){ document.getElementById(id).classList.remove("active"); }
+
+    window.onclick = function(e){
+      if (e.target.classList && e.target.classList.contains("modal")){
+        e.target.classList.remove("active");
+      }
+    }
+
+    // ======= Buy flow =======
+    let selectedProduct = null;
+    let lastWhatsAppUrl = null;
+
+    function openBuyModal(id){
+      selectedProduct = products.find(x => x.id === id);
+      if (!selectedProduct) return;
+
+      const content = document.getElementById("buyStep1Content");
+      content.innerHTML = `
+        <img src="${selectedProduct.image}" class="w-full h-40 object-cover rounded-2xl mb-4 border border-white/10">
+        <div class="text-center">
+          <div class="text-sm" style="color:var(--muted)">${prettyProvider(selectedProduct.provider)} • ${(selectedProduct.tag||"").toUpperCase()}</div>
+          <h2 class="text-2xl font-bold mt-1">${selectedProduct.name}</h2>
         </div>
-    </div>
 
-    <script>
-        // --- Data Configuration ---
-        const WHATSAPP_NUMBER = "94771273983"; // Format: 94xxxxxxxxx
+        <div class="mt-5 rounded-2xl glass-2 p-4 text-left">
+          <div class="text-sm font-bold text-blue-200 mb-2"><i class="fa-solid fa-tags mr-2"></i>${(LANG==="si") ? "මිල ලැයිස්තුව" : "Price List"}</div>
+          <ul class="text-sm space-y-1" style="color:var(--muted)">
+            ${selectedProduct.prices.map(x => `<li>• ${x}</li>`).join("")}
+          </ul>
+          <div class="mt-3 text-sm" style="color:var(--muted)">
+            <i class="fa-regular fa-calendar mr-2"></i>${selectedProduct.duration}
+          </div>
+        </div>
+      `;
 
-        const products = [
-            {
-                id: 1,
-                name: "DIALOG ZOOM",
-                image: "https://placehold.co/400x250/1e293b/ef4444?text=DIALOG+ZOOM",
-                prices: ["100GB - 200 LKR", "200GB - 300 LKR", "300GB - 400 LKR", "Unlimited - 500 LKR"],
-                duration: "Valid for 30 Days",
-                plans: ["Dialog Router 298,724 work and learn lite packages"],
-                status: "Available"
-            },
-            {
-                id: 2,
-                name: "SLT4G / FIBER ZOOM",
-                image: "https://placehold.co/400x250/1e293b/3b82f6?text=SLT/FIBER+ZOOM",
-                prices: ["100GB - 200 LKR", "200GB - 300 LKR", "300GB - 400 LKR", "Unlimited - 500 LKR"],
-                duration: "Valid for 30 Days",
-                plans: ["SLT 4G and Fiber postpaid router Meetmax addon package."],
-                status: "Available"
-            },
-            {
-                id: 3,
-                name: "SLT4G / FIBER NETFLIX",
-                image: "https://placehold.co/400x250/1e293b/ec4899?text=SLT4G/FIBER+NETFLIX",
-                prices: ["100GB - 200 LKR", "200GB - 300 LKR", "300GB - 400 LKR", "Unlimited - 500 LKR"],
-                duration: "Valid for 30 Days",
-                plans: ["SLT 4G and Fiber postpaid router Entertainment addon package."],
-                status: "Available"
-            },
-            {
-                id: 4,
-                name: "MOBITEL ZOOM",
-                image: "https://placehold.co/400x250/1e293b/22c55e?text=MOBITEL+ZOOM",
-                prices: ["100GB - 250 LKR", "200GB - 350 LKR", "300GB - 450 LKR", "500GB - 600 LKR"],
-                duration: "Valid for 30 Days",
-                plans: ["Mobitel Mobile 222 zoom package."],
-                status: "Available"
-            },
-            {
-                id: 5,
-                name: "HUTCH ZOOM",
-                image: "https://placehold.co/400x250/1e293b/f59e0b?text=HUTCH+SOCIAL",
-                prices: ["100GB - 250 LKR", "200GB - 350 LKR", "300GB - 450 LKR", "Unlimited - 600 LKR"],
-                duration: "Valid for 30 Days",
-                plans: ["Hutch 224 zoom package."],
-                status: "Available"
-            },
-            {
-                id: 6,
-                name: "AIRTEL ZOOM",
-                image: "https://placehold.co/400x250/1e293b/ef4444?text=AIRTEL+ZOOM",
-                prices: ["100GB - 250 LKR", "200GB - 350 LKR", "300GB - 450 LKR", "500GB - 600 LKR"],
-                duration: "Valid for 30 Days",
-                plans: ["Airtel 215 Zoom package."],
-                status: "Available"
-            }
-        ];
+      openModal("buyStep1Modal");
+    }
 
-        let selectedProduct = null;
-        let currentRating = 0;
+    function proceedToCheckout(){
+      closeModal("buyStep1Modal");
 
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProducts();
-            
-            // Set current time to datetime inputs for convenience
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('paymentTime').value = now.toISOString().slice(0,16);
-        });
+      document.getElementById("checkoutProductName").textContent = `Package: ${selectedProduct.name}`;
 
-        // --- Render Products ---
-        function renderProducts() {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = products.map(product => `
-                <div class="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700 hover:shadow-blue-500/20 transition duration-300">
-                    <div class="relative">
-                        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
-                        <div class="absolute top-0 right-0 bg-slate-900/80 px-2 py-1 m-2 rounded text-xs text-white">44G VPN</div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="text-xl font-bold mb-2 text-white">${product.name}</h3>
-                        <div class="flex items-center mb-4">
-                            <span class="blink-dot"></span>
-                            <span class="text-green-400 text-sm font-semibold uppercase tracking-wider">${product.status}</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="openBuyModal(${product.id})" class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-medium transition">Buy Now</button>
-                            <button onclick="openDetailsModal(${product.id})" class="bg-slate-700 hover:bg-slate-600 text-white py-2 rounded font-medium transition">Details</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+      const select = document.getElementById("packageSelect");
+      select.innerHTML = selectedProduct.prices.map(p => `<option value="${p}">${p}</option>`).join("");
+
+      openModal("checkoutModal");
+    }
+
+    function handleCheckout(e){
+      e.preventDefault();
+      const name = document.getElementById("buyerName").value.trim();
+      const number = document.getElementById("buyerNumber").value.trim();
+      const pricePkg = document.getElementById("packageSelect").value;
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+      const dateTime = document.getElementById("paymentTime").value;
+
+      const message =
+        `*--- NEW ORDER (44G VPN) ---*%0A%0A` +
+        `*Product:* ${encodeURIComponent(selectedProduct.name)}%0A` +
+        `*Buyer Name:* ${encodeURIComponent(name)}%0A` +
+        `*Number:* ${encodeURIComponent(number)}%0A` +
+        `*Selected Pkg:* ${encodeURIComponent(pricePkg)}%0A` +
+        `*Payment Method:* ${encodeURIComponent(paymentMethod)}%0A` +
+        `*Date/Time:* ${encodeURIComponent(dateTime)}%0A%0A` +
+        `_Please verify payment._`;
+
+      lastWhatsAppUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+
+      // open WhatsApp
+      window.open(lastWhatsAppUrl, "_blank");
+
+      // close checkout and show success UI
+      closeModal("checkoutModal");
+
+      // fill success data
+      document.getElementById("successProduct").textContent = selectedProduct.name;
+      document.getElementById("successPkg").textContent = pricePkg;
+      document.getElementById("successPay").textContent = paymentMethod;
+      document.getElementById("openWhatsAppAgain").href = lastWhatsAppUrl;
+
+      openModal("orderSuccessModal");
+    }
+
+    // ======= Details =======
+    function openDetailsModal(id){
+      const product = products.find(p => p.id === id);
+      if (!product) return;
+
+      const content = document.getElementById("detailsContent");
+      content.innerHTML = `
+        <div class="text-center">
+          <img src="${product.image}" class="w-full h-40 object-cover rounded-2xl mb-4 border border-white/10">
+          <div class="text-sm" style="color:var(--muted)">${prettyProvider(product.provider)} • ${(product.tag||"").toUpperCase()}</div>
+          <h2 class="text-2xl font-bold mt-1">${product.name}</h2>
+        </div>
+
+        <div class="mt-5 space-y-3">
+          <div class="rounded-2xl glass-2 p-4">
+            <div class="text-sm font-bold text-blue-200 mb-2"><i class="fa-solid fa-tags mr-2"></i>${(LANG==="si") ? "මිල" : "Prices"}</div>
+            <ul class="text-sm space-y-1" style="color:var(--muted)">
+              ${product.prices.map(x => `<li>• ${x}</li>`).join("")}
+            </ul>
+          </div>
+
+          <div class="rounded-2xl glass-2 p-4">
+            <div class="text-sm font-bold text-purple-200 mb-2"><i class="fa-solid fa-list-check mr-2"></i>${(LANG==="si") ? "වැඩ කරන පැකේජ" : "Working Plans"}</div>
+            <ul class="text-sm space-y-1" style="color:var(--muted)">
+              ${product.plans.map(x => `<li>• ${x}</li>`).join("")}
+            </ul>
+          </div>
+
+          <div class="rounded-2xl glass-2 p-4">
+            <div class="text-sm font-bold text-emerald-200 mb-2"><i class="fa-regular fa-calendar mr-2"></i>${(LANG==="si") ? "කාල සීමාව" : "Duration"}</div>
+            <div class="text-sm" style="color:var(--muted)">${product.duration}</div>
+          </div>
+
+          <button onclick="closeModal('detailsModal'); openBuyModal(${product.id});"
+                  class="w-full rounded-2xl bg-blue-600 hover:bg-blue-700 transition font-bold py-3">
+            ${(LANG==="si") ? "මෙම පැකේජය මිලදී ගන්න" : "Buy This Plan"}
+          </button>
+        </div>
+      `;
+      openModal("detailsModal");
+    }
+
+    // ======= Rating =======
+    let currentRating = 0;
+
+    function setRating(n){
+      currentRating = n;
+      document.getElementById("ratingValue").value = n;
+
+      for (let i=1; i<=5; i++){
+        const star = document.getElementById(`star${i}`);
+        if (i <= n){
+          star.classList.remove("text-white/20");
+          star.classList.add("text-yellow-300");
+        } else {
+          star.classList.remove("text-yellow-300");
+          star.classList.add("text-white/20");
         }
+      }
+    }
 
-        // --- Drawer Logic ---
-        function toggleDrawer() {
-            const drawer = document.getElementById('sideDrawer');
-            const overlay = document.getElementById('sideOverlay');
-            
-            if (drawer.classList.contains('translate-x-full')) {
-                // Open
-                drawer.classList.remove('translate-x-full');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-            } else {
-                // Close
-                drawer.classList.add('translate-x-full');
-                overlay.classList.add('opacity-0');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
-        }
+    function submitRating(e){
+      e.preventDefault();
+      const name = document.getElementById("raterName").value.trim();
+      const comment = document.getElementById("rateComment").value.trim();
 
-        function toggleHowToRun() {
-            const menu = document.getElementById('howToSubMenu');
-            const arrow = document.getElementById('howToArrow');
-            if(menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                arrow.classList.add('rotate-180');
-            } else {
-                menu.classList.add('hidden');
-                arrow.classList.remove('rotate-180');
-            }
-        }
+      if (currentRating === 0){
+        alert(LANG==="si" ? "කරුණාකර තරු ගණන තෝරන්න!" : "Please select a star rating!");
+        return;
+      }
 
-        // --- Modal Logic ---
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
+      const message =
+        `*--- NEW RATING ---*%0A` +
+        `*Stars:* ${currentRating}/5 ⭐️%0A` +
+        `*Name:* ${encodeURIComponent(name)}%0A` +
+        `*Comment:* ${encodeURIComponent(comment)}`;
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+      window.open(url, "_blank");
+      closeModal("rateModal");
+    }
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
-        }
+    // ======= Support =======
+    function submitSupport(e){
+      e.preventDefault();
+      const msg = document.getElementById("supportMsg").value.trim();
+      const finalMsg = `*--- CUSTOMER SUPPORT ---*%0A%0A${encodeURIComponent(msg)}`;
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${finalMsg}`;
+      window.open(url, "_blank");
+      closeModal("supportModal");
+    }
 
-        // --- Buy Flow Logic ---
-        function openBuyModal(id) {
-            selectedProduct = products.find(p => p.id === id);
-            if (!selectedProduct) return;
+    // ======= Copy =======
+    function copyToClipboard(elementId){
+      const text = document.getElementById(elementId).innerText;
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      try{
+        document.execCommand("copy");
+        alert((LANG==="si" ? "කොපි කළා: " : "Copied: ") + text);
+      } catch(err){
+        alert(LANG==="si" ? "කොපි වුනේ නැහැ. අතින් කොපි කරන්න." : "Copy failed. Please copy manually.");
+      }
+      document.body.removeChild(textarea);
+    }
 
-            const content = document.getElementById('buyStep1Content');
-            content.innerHTML = `
-                <img src="${selectedProduct.image}" class="w-full h-40 object-cover rounded-lg mb-4 border border-slate-600">
-                <h2 class="text-2xl font-bold text-white mb-2">${selectedProduct.name}</h2>
-                <div class="text-left bg-slate-700/50 p-4 rounded-lg">
-                    <h4 class="text-blue-300 text-sm font-bold mb-2">Price List:</h4>
-                    <ul class="list-disc list-inside text-slate-300 text-sm mb-3">
-                        ${selectedProduct.prices.map(p => `<li>${p}</li>`).join('')}
-                    </ul>
-                    <h4 class="text-blue-300 text-sm font-bold mb-1">Duration:</h4>
-                    <p class="text-slate-300 text-sm">${selectedProduct.duration}</p>
-                </div>
-            `;
-            openModal('buyStep1Modal');
-        }
+    // ======= INIT =======
+    document.addEventListener("DOMContentLoaded", () => {
+      // set datetime default
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      const el = document.getElementById("paymentTime");
+      if (el) el.value = now.toISOString().slice(0,16);
 
-        function proceedToCheckout() {
-            closeModal('buyStep1Modal');
-            
-            // Populate Checkout Modal
-            document.getElementById('checkoutProductName').textContent = `Package: ${selectedProduct.name}`;
-            
-            // Populate Dropdown
-            const select = document.getElementById('packageSelect');
-            select.innerHTML = selectedProduct.prices.map(p => `<option value="${p}">${p}</option>`).join('');
-            
-            openModal('checkoutModal');
-        }
+      // initial render
+      applyFilters();
 
-        function handleCheckout(e) {
-            e.preventDefault();
-            const name = document.getElementById('buyerName').value;
-            const number = document.getElementById('buyerNumber').value;
-            const pricePkg = document.getElementById('packageSelect').value;
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-            const dateTime = document.getElementById('paymentTime').value;
-
-            const message = `*--- NEW ORDER (44G VPN) ---*%0A%0A` +
-                            `*Product:* ${selectedProduct.name}%0A` +
-                            `*Buyer Name:* ${name}%0A` +
-                            `*Number:* ${number}%0A` +
-                            `*Selected Pkg:* ${pricePkg}%0A` +
-                            `*Payment Method:* ${paymentMethod}%0A` +
-                            `*Date/Time:* ${dateTime}%0A%0A` +
-                            `_Please verify payment._`;
-
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
-            window.open(url, '_blank');
-            closeModal('checkoutModal');
-        }
-
-        // --- Details Logic ---
-        function openDetailsModal(id) {
-            const product = products.find(p => p.id === id);
-            const content = document.getElementById('detailsContent');
-            content.innerHTML = `
-                <img src="${product.image}" class="w-full h-40 object-cover rounded-lg mb-4 border border-slate-600">
-                <h2 class="text-2xl font-bold text-white mb-4">${product.name}</h2>
-                
-                <div class="space-y-3 text-left">
-                    <div class="bg-slate-700/30 p-3 rounded">
-                        <h5 class="text-blue-400 text-sm font-bold">Prices</h5>
-                        <ul class="text-slate-300 text-sm list-none">
-                            ${product.prices.map(p => `<li>• ${p}</li>`).join('')}
-                        </ul>
-                    </div>
-                    
-                    <div class="bg-slate-700/30 p-3 rounded">
-                        <h5 class="text-purple-400 text-sm font-bold">Working Plans</h5>
-                        <ul class="text-slate-300 text-sm list-none">
-                            ${product.plans.map(p => `<li>• ${p}</li>`).join('')}
-                        </ul>
-                    </div>
-
-                    <div class="bg-slate-700/30 p-3 rounded">
-                         <h5 class="text-green-400 text-sm font-bold">Duration</h5>
-                         <p class="text-slate-300 text-sm">${product.duration}</p>
-                    </div>
-                </div>
-            `;
-            openModal('detailsModal');
-        }
-
-        // --- Rating Logic ---
-        function setRating(n) {
-            currentRating = n;
-            document.getElementById('ratingValue').value = n;
-            for(let i=1; i<=5; i++) {
-                const star = document.getElementById(`star${i}`);
-                if(i <= n) {
-                    star.classList.remove('text-slate-600');
-                    star.classList.add('text-yellow-400');
-                } else {
-                    star.classList.remove('text-yellow-400');
-                    star.classList.add('text-slate-600');
-                }
-            }
-        }
-
-        function submitRating(e) {
-            e.preventDefault();
-            const name = document.getElementById('raterName').value;
-            const comment = document.getElementById('rateComment').value;
-            
-            if(currentRating === 0) {
-                alert("Please select a star rating!");
-                return;
-            }
-
-            const message = `*--- NEW RATING ---*%0A` +
-                            `*Stars:* ${currentRating}/5 ⭐️%0A` +
-                            `*Name:* ${name}%0A` +
-                            `*Comment:* ${comment}`;
-            
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
-            window.open(url, '_blank');
-            closeModal('rateModal');
-        }
-
-        // --- Support Logic ---
-        function submitSupport(e) {
-            e.preventDefault();
-            const msg = document.getElementById('supportMsg').value;
-            const finalMsg = `*--- CUSTOMER SUPPORT ---*%0A%0A${encodeURIComponent(msg)}`;
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${finalMsg}`;
-            window.open(url, '_blank');
-            closeModal('supportModal');
-        }
-
-        // --- Utility: Copy to Clipboard ---
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            
-            // Create a temporary textarea element
-            const textarea = document.createElement("textarea");
-            textarea.value = text;
-            textarea.style.position = "fixed";  // Avoid scrolling to bottom
-            document.body.appendChild(textarea);
-            textarea.focus();
-            textarea.select();
-            
-            try {
-                document.execCommand('copy');
-                alert('Copied to clipboard: ' + text);
-            } catch (err) {
-                console.error('Fallback: Oops, unable to copy', err);
-            }
-            
-            document.body.removeChild(textarea);
-        }
-    </script>
+      // default language
+      setLang("en");
+    });
+  </script>
 </body>
-
 </html>
-
-
-
